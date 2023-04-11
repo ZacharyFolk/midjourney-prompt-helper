@@ -1,25 +1,19 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useState, useEffect, useCallback } from 'react';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  AttributeButton,
   Box,
   ButtonGroup,
   Chip,
-  Paper,
   Grid,
   Container,
   IconButton,
-  ImageList,
-  ImageListItem,
-  ImageListItemBar,
   Typography,
   TextField,
   Input,
   Button,
-  Slider,
   Stack,
   InputAdornment,
 } from '@mui/material';
@@ -27,11 +21,9 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { attributeOptions } from './attributes/params';
 import { photoChips } from './attributes/chipObject';
 import { artistChips } from './attributes/artistsObject';
-
-import FileCopyIcon from '@mui/icons-material/FileCopy';
+import RedditImageScraper from './components/RedditImageScraper';
 import { CopyAll } from '@mui/icons-material';
 import './App.css';
-// Define the theme
 const theme = createTheme({
   palette: {
     mode: 'dark', // or 'dark'
@@ -39,7 +31,6 @@ const theme = createTheme({
   spacing: 4,
 });
 
-// Style the Box component based on the theme
 const StyledBox = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
   color: theme.palette.text.primary,
@@ -47,67 +38,20 @@ const StyledBox = styled(Box)(({ theme }) => ({
   padding: theme.spacing(2),
 }));
 
-function RedditImageScraper({ subreddit }) {
-  const [images, setImages] = useState([]);
-
-  useEffect(() => {
-    async function fetchImages() {
-      const response = await fetch(
-        `https://www.reddit.com/r/${subreddit}/new.json?limit=100`
-      );
-      const data = await response.json();
-      const newImages = data.data.children
-        .filter((post) => post.data.post_hint === 'image')
-        .map((post) => {
-          return {
-            img: post?.data?.url,
-            title: post?.data?.title,
-            permalink: post?.data?.permalink,
-          };
-        });
-      setImages(newImages);
-    }
-    fetchImages();
-  }, [subreddit]);
-
-  return (
-    <Box
-      sx={{
-        width: '100%',
-        height: 450,
-        overflowY: 'scroll',
-      }}
-    >
-      <ImageList cols={3} gap={8} variant='masonry'>
-        {images.map((item) => (
-          <ImageListItem key={item.img}>
-            <img
-              src={`${item.img}?w=248&fit=crop&auto=format`}
-              srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
-              alt={item.title}
-              loading='lazy'
-            />
-          </ImageListItem>
-        ))}
-      </ImageList>
-    </Box>
-  );
-}
-
-// Define the App component
 function App() {
   const defaultInfo =
     'Here you will find more information about any parameter or attribute.  Just click on the attribute you want to learn more about.';
   const [attributes, setAttributes] = useState({});
   const [selectedChips, setSelectedChips] = useState([]);
-  const [aspectWidth, setAspectWidth] = useState(1);
-  const [aspectHeight, setAspectHeight] = useState(1);
+  const [selectedParams, setSelectedParams] = useState([]);
+
+  const [aspectRatio, setAspectRatio] = useState({ width: 1, height: 1 });
   const [attributeDescription, setAttributeDescription] = useState(defaultInfo);
   const [currentAttribute, setCurrentAttribute] = useState('');
   const [expanded, setExpanded] = useState(false);
   const [userInput, setUserInput] = useState('');
 
-  const addAttribute = (category, attribute, desc, prefix) => {
+  const addAttribute = useCallback((category, attribute, desc, prefix) => {
     const prefixedAttribute = prefix + attribute; // append the prefix to the attribute value
     setAttributeDescription(desc);
     setCurrentAttribute(prefix);
@@ -115,31 +59,18 @@ function App() {
     // tracking this just to show example aspect ration in help box
     if (prefix === '--ar:') {
       const [width, height] = attribute.split(':');
-      setAspectWidth(width);
-      setAspectHeight(height);
+      setAspectRatio({ width, height });
     }
 
-    setAttributes((prevAttributes) => {
-      const newAttributes = { ...prevAttributes };
+    setAttributes((prevAttributes) => ({
+      ...prevAttributes,
+      [category]: prefixedAttribute,
+    }));
+  }, []);
 
-      console.log(newAttributes);
-      newAttributes[category] = prefixedAttribute;
-
-      console.log(newAttributes);
-      return newAttributes;
-    });
-  };
-
-  const onSliderChange = (category, value, chosenValue) => {
-    setAttributeDescription(value.description);
-    console.log(value);
-    addAttribute(category, chosenValue, value.description, value.prefix);
-  };
-
-  const removeAttribute = (category) => {
+  const removeAttribute = useCallback((category) => {
     if (category === 'aspectRatio') {
-      setAspectWidth(1);
-      setAspectHeight(1);
+      setAspectRatio({ width: 1, height: 1 });
     }
     setAttributeDescription(defaultInfo);
     setCurrentAttribute('');
@@ -148,80 +79,33 @@ function App() {
       delete newAttributes[category];
       return newAttributes;
     });
-  };
+  }, []);
 
-  const AttributeButton = React.memo(({ label, attribute, onClick }) => (
-    <Button onClick={() => onClick(attribute)}>{label}</Button>
-  ));
-
-  const handleChange = (panel) => (event, isExpanded) => {
-    setExpanded(isExpanded ? panel : false);
-  };
-
-  const buildPromptString = () => {
-    const attributeString = Object.values(attributes).join(' ');
-    const chipString = Object.values(selectedChips).join(' ');
-    return `MidJourney ${userInput} ${chipString} ${attributeString}`;
-  };
-
-  // CHIPS
-  const [handleChipClickFunctions, setHandleChipClickFunctions] = useState({});
-  const [handleDeleteChipFunctions, setHandleDeleteChipFunctions] = useState(
-    {}
-  );
-  const MemoizedChip = memo(({ chip, selected, onClick, onDelete }) => {
-    return (
-      <Chip
-        label={chip.label ? chip.label : chip}
-        variant='outlined'
-        onClick={onClick}
-        onDelete={selected ? onDelete : undefined}
-        value={chip}
-        color={selected ? 'success' : 'default'}
-      />
-    );
-  });
-  const AttributeGroup = React.memo(
-    ({
-      attributeName,
-      value,
-      onSliderChange,
-      addAttribute,
-      removeAttribute,
-    }) => (
+  const AttributeGroup = memo(
+    ({ attributeName, value, addAttribute, removeAttribute }) => (
       <div>
         <div>{value.name}</div>
-        {value.slider ? (
-          <Slider
-            min={0}
-            max={value.max}
-            step={10}
-            marks
-            onChange={(event, newValue) =>
-              onSliderChange(attributeName, value, newValue)
-            }
-          />
-        ) : (
-          <ButtonGroup>
-            {value.options.map((option) => (
-              <AttributeButton
-                key={option.value}
-                label={option.label}
-                attribute={attributeName}
-                value={option.value}
-                multiple={value.multiple}
-                onClick={() =>
-                  addAttribute(
-                    attributeName,
-                    option.value,
-                    value.description,
-                    value.prefix
-                  )
-                }
-              />
-            ))}
-          </ButtonGroup>
-        )}
+
+        <ButtonGroup>
+          {value.options.map((option) => (
+            <AttributeButton
+              key={option.value}
+              label={option.label}
+              attribute={attributeName}
+              value={option.value}
+              multiple={value.multiple}
+              onClick={() =>
+                addAttribute(
+                  attributeName,
+                  option.value,
+                  value.description,
+                  value.prefix
+                )
+              }
+            />
+          ))}
+        </ButtonGroup>
+
         {attributes[attributeName] && (
           <Button
             variant='contained'
@@ -234,35 +118,91 @@ function App() {
       </div>
     )
   );
-  useEffect(() => {
-    const newHandleChipClickFunctions = {};
-    const newHandleDeleteChipFunctions = {};
+  const AttributeButton = memo(({ label, attribute, onClick }) => (
+    <Button onClick={() => onClick(attribute)} color='secondary'>
+      {label}
+    </Button>
+  ));
 
-    for (const chipValue of Object.values(photoChips)) {
-      for (const chip of chipValue.chips) {
-        let newAttribute = chip.label ? chip.label + ', ' + chip.value : chip;
+  const handleChange = (panel) => (event, isExpanded) => {
+    setExpanded(isExpanded ? panel : false);
+  };
 
-        newHandleChipClickFunctions[newAttribute] = () => {
-          setSelectedChips((prevChips) => {
-            if (prevChips.includes(newAttribute)) {
-              return prevChips.filter((chip) => chip !== newAttribute);
-            } else {
-              return [...prevChips, newAttribute];
-            }
-          });
-        };
+  const buildPromptString = () => {
+    const attributeString = Object.values(attributes).join(' ');
+    const chipString = Object.values(selectedChips).join(' ');
+    return `MidJourney ${userInput} ${chipString} ${attributeString}`;
+  };
 
-        newHandleDeleteChipFunctions[newAttribute] = () => {
-          setSelectedChips((prevChips) =>
-            prevChips.filter((chip) => chip !== newAttribute)
-          );
-        };
+  // ACCORDION
+
+  function AccordionGroup({ items, expanded, handleChange, MemoizedChip }) {
+    return (
+      <div>
+        {items.map(([key, value]) => (
+          <Accordion
+            key={key}
+            expanded={expanded === key}
+            onChange={handleChange(key)}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls={`${key}-content`}
+              id={`${key}-header`}
+            >
+              <Typography sx={{ width: '33%', flexShrink: 0 }}>
+                {value.name}
+              </Typography>
+              <Typography sx={{ color: 'text.secondary' }}>
+                {value.description}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Grid container spacing={3}>
+                {value.chips.map((chip, index) => (
+                  <Grid item key={index}>
+                    <MemoizedChip chip={chip} />
+                  </Grid>
+                ))}
+              </Grid>
+            </AccordionDetails>
+          </Accordion>
+        ))}
+      </div>
+    );
+  }
+
+  // CHIPS
+
+  const MemoizedChip = memo(({ chip }) => {
+    const attribute = chip.label ? chip.label + ', ' + chip.value : chip;
+    const selected = selectedChips.includes(attribute);
+    const handleClick = () => {
+      if (selected) {
+        setSelectedChips((prevChips) =>
+          prevChips.filter((chip) => chip !== attribute)
+        );
+      } else {
+        setSelectedChips((prevChips) => [...prevChips, attribute]);
       }
-    }
+    };
 
-    setHandleChipClickFunctions(newHandleChipClickFunctions);
-    setHandleDeleteChipFunctions(newHandleDeleteChipFunctions);
-  }, []);
+    const handleDelete = () => {
+      setSelectedChips((prevChips) =>
+        prevChips.filter((chip) => chip !== attribute)
+      );
+    };
+    return (
+      <Chip
+        label={chip.label ? chip.label : chip}
+        variant='outlined'
+        onClick={handleClick}
+        onDelete={selected ? handleDelete : undefined}
+        value={chip}
+        color={selected ? 'success' : 'default'}
+      />
+    );
+  });
 
   const handleMainInput = (event) => {
     setUserInput(event.target.value);
@@ -360,28 +300,26 @@ function App() {
                       key={key}
                       value={value}
                       attributeName={key}
-                      onSliderChange={onSliderChange}
                       addAttribute={addAttribute}
                       removeAttribute={removeAttribute}
                       defaultInfo={defaultInfo}
                       currentAttribute={currentAttribute}
                       setAttributeDescription={setAttributeDescription}
-                      setAspectWidth={setAspectWidth}
-                      setAspectHeight={setAspectHeight}
                     />
                   ))}
                 </Grid>
 
                 <Grid item xs={5}>
                   <Grid item xs={12}>
-                    <Typography variant='h5' component='h2'>
-                      More info
-                    </Typography>
                     <Grid container alignItems='center' justifyContent='center'>
                       {currentAttribute === '--ar:' ? (
                         <>
                           <Grid item xs={8}>
-                            {attributeDescription}
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: attributeDescription,
+                              }}
+                            />
                           </Grid>
                           <Grid
                             item
@@ -393,27 +331,26 @@ function App() {
                           >
                             <Box
                               sx={{
-                                width: aspectWidth * 20,
-                                height: aspectHeight * 20,
+                                width: aspectRatio.width * 20,
+                                height: aspectRatio.height * 20,
                                 backgroundColor: 'secondary.dark',
                                 display: 'flex',
                                 justifyContent: 'center',
                                 alignItems: 'center',
                                 textAlign: 'center',
-
-                                // '&:hover': {
-                                //   backgroundColor: 'primary.main',
-                                //   opacity: [0.9, 0.8, 0.7],
-                                // },
                               }}
                             >
-                              {aspectWidth} : {aspectHeight}
+                              {aspectRatio.width} : {aspectRatio.height}
                             </Box>
                           </Grid>
                         </>
                       ) : (
                         <Grid item xs={12}>
-                          {attributeDescription}
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: attributeDescription,
+                            }}
+                          />
                         </Grid>
                       )}
                     </Grid>
@@ -425,112 +362,27 @@ function App() {
                   <Typography variant='h5' component='h2'>
                     Photography
                   </Typography>
-                  {Object.entries(photoChips).map(([key, value]) => (
-                    <div key={key}>
-                      <Accordion
-                        expanded={expanded === key}
-                        onChange={handleChange(key)}
-                      >
-                        <AccordionSummary
-                          expandIcon={<ExpandMoreIcon />}
-                          aria-controls={`${key}-content`}
-                          id={`${key}-header`}
-                        >
-                          <Typography sx={{ width: '33%', flexShrink: 0 }}>
-                            {value.name}
-                          </Typography>
-                          <Typography sx={{ color: 'text.secondary' }}>
-                            {value.description}
-                          </Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                          <Grid container spacing={3}>
-                            {value.chips.map((chip, index) => {
-                              let newAttribute = chip.label
-                                ? chip.label + ', ' + chip.value
-                                : chip;
-                              return (
-                                <Grid item key={index}>
-                                  <MemoizedChip
-                                    key={index}
-                                    chip={chip}
-                                    selected={selectedChips.includes(
-                                      newAttribute
-                                    )}
-                                    onClick={
-                                      handleChipClickFunctions[newAttribute]
-                                    }
-                                    onDelete={
-                                      handleDeleteChipFunctions[newAttribute]
-                                    }
-                                  />
-                                </Grid>
-                              );
-                            })}
-                          </Grid>
-                        </AccordionDetails>
-                      </Accordion>
-                    </div>
-                  ))}
-
+                  <AccordionGroup
+                    items={Object.entries(photoChips)}
+                    expanded={expanded}
+                    handleChange={handleChange}
+                    MemoizedChip={MemoizedChip}
+                  />
                   <Typography variant='h5' component='h2'>
                     Artists and Styles
                   </Typography>
-                  {Object.entries(artistChips).map(
-                    ([categoryKey, categoryValue]) => (
-                      <div key={categoryKey}>
-                        <Accordion
-                          expanded={expanded === categoryKey}
-                          onChange={handleChange(categoryKey)}
-                        >
-                          <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls={`${categoryKey}-content`}
-                            id={`${categoryKey}-header`}
-                          >
-                            <Typography sx={{ width: '33%', flexShrink: 0 }}>
-                              {categoryValue.name}
-                            </Typography>
-                            <Typography sx={{ color: 'text.secondary' }}>
-                              {categoryValue.description}
-                            </Typography>
-                          </AccordionSummary>
-                          <AccordionDetails>
-                            <Grid container spacing={3}>
-                              {categoryValue.chips.map((chip, index) => {
-                                let newAttribute = chip.label
-                                  ? chip.label + ', ' + chip.value
-                                  : chip;
-                                return (
-                                  <Grid item key={index}>
-                                    <MemoizedChip
-                                      key={index}
-                                      chip={chip}
-                                      selected={selectedChips.includes(
-                                        newAttribute
-                                      )}
-                                      onClick={
-                                        handleChipClickFunctions[newAttribute]
-                                      }
-                                      onDelete={
-                                        handleDeleteChipFunctions[newAttribute]
-                                      }
-                                    />
-                                  </Grid>
-                                );
-                              })}
-                            </Grid>
-                          </AccordionDetails>
-                        </Accordion>
-                      </div>
-                    )
-                  )}
+                  <AccordionGroup
+                    items={Object.entries(artistChips)}
+                    expanded={expanded}
+                    handleChange={handleChange}
+                    MemoizedChip={MemoizedChip}
+                  />{' '}
                 </Grid>
               </Grid>
             </Grid>
             <Grid item xs={4}>
               <Grid item xs={12} alignItems='flex-start'>
-                <RedditImageScraper subreddit='midjourney' />
+                {/* <RedditImageScraper subreddit='midjourney' /> */}
               </Grid>
             </Grid>
           </Grid>

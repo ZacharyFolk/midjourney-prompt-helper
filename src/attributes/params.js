@@ -13,19 +13,11 @@ export const attributeOptions = {
       { value: '7:4', label: '7:4' },
     ],
   },
-  chaos: {
-    name: 'Chaos',
-    description:
-      'This parameter influences how vaired the inital image  grids are.  The higher the value the more unusual and unexpected results and differences between the variations.',
-    max: 100,
-    slider: true,
-    prefix: '--chaos:',
-    default: 50,
-  },
+
   quality: {
     name: 'Quality',
     description:
-      'Quality parameter changes how much time is spent genrating the image.  Higher values will take longer to generate and produce more details.  Higher values also mean more GPU minutes are used. THe quality is not related ot the resolution of the image.  As ov Version 4 the highest quality setting is 1 which is the default.  You may want to use a lower quality setting to see what kind of results you get, sometimes they may look better especially for a general astract look.',
+      '<h2>Quality</h2> Quality parameter changes how much time is spent genrating the image.  Higher values will take longer to generate and produce more details. <br />  Higher values also mean more GPU minutes are used. THe quality is not related ot the resolution of the image.  As ov Version 4 the highest quality setting is 1 which is the default.  You may want to use a lower quality setting to see what kind of results you get, sometimes they may look better especially for a general astract look.',
     options: [
       { value: '.25', label: '.25' },
       { value: '.5', label: '.5' },
@@ -33,3 +25,13 @@ export const attributeOptions = {
     prefix: '--quality',
   },
 };
+
+// chaos: {
+//     name: 'Chaos',
+//     description:
+//       'This parameter influences how vaired the inital image  grids are.  The higher the value the more unusual and unexpected results and differences between the variations.',
+//     max: 100,
+//     slider: true,
+//     prefix: '--chaos:',
+//     default: 50,
+//   },
