@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import {
   Accordion,
@@ -107,13 +107,6 @@ function App() {
   const [expanded, setExpanded] = useState(false);
   const [userInput, setUserInput] = useState('');
 
-  /**
-   *
-   * @param {*} category
-   * @param {*} attribute
-   * @param {*} desc
-   * @param {*} prefix
-   */
   const addAttribute = (category, attribute, desc, prefix) => {
     const prefixedAttribute = prefix + attribute; // append the prefix to the attribute value
     setAttributeDescription(desc);
@@ -157,9 +150,9 @@ function App() {
     });
   };
 
-  const AttributeButton = ({ label, attribute, onClick }) => (
+  const AttributeButton = React.memo(({ label, attribute, onClick }) => (
     <Button onClick={() => onClick(attribute)}>{label}</Button>
-  );
+  ));
 
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -170,28 +163,106 @@ function App() {
     const chipString = Object.values(selectedChips).join(' ');
     return `MidJourney ${userInput} ${chipString} ${attributeString}`;
   };
-  const handleChipClick = (value) => () => {
-    let newAttribute = value.label ? value.label + ', ' + value.value : value;
 
-    console.log(newAttribute);
-    setSelectedChips((prevChips) => {
-      if (prevChips.includes(newAttribute)) {
-        return prevChips.filter((chip) => chip !== newAttribute);
-      } else {
-        return [...prevChips, newAttribute];
-      }
-    });
-  };
-  const handleDeleteChip = (value) => {
-    let newAttribute = value.label ? value.label + ', ' + value.value : value;
-    setSelectedChips((prevChips) =>
-      prevChips.filter((chip) => chip !== newAttribute)
+  // CHIPS
+  const [handleChipClickFunctions, setHandleChipClickFunctions] = useState({});
+  const [handleDeleteChipFunctions, setHandleDeleteChipFunctions] = useState(
+    {}
+  );
+  const MemoizedChip = memo(({ chip, selected, onClick, onDelete }) => {
+    return (
+      <Chip
+        label={chip.label ? chip.label : chip}
+        variant='outlined'
+        onClick={onClick}
+        onDelete={selected ? onDelete : undefined}
+        value={chip}
+        color={selected ? 'success' : 'default'}
+      />
     );
-  };
-  const isChipSelected = (value) => {
-    let newAttribute = value.label ? value.label + ', ' + value.value : value;
-    return selectedChips.includes(newAttribute);
-  };
+  });
+  const AttributeGroup = React.memo(
+    ({
+      attributeName,
+      value,
+      onSliderChange,
+      addAttribute,
+      removeAttribute,
+    }) => (
+      <div>
+        <div>{value.name}</div>
+        {value.slider ? (
+          <Slider
+            min={0}
+            max={value.max}
+            step={10}
+            marks
+            onChange={(event, newValue) =>
+              onSliderChange(attributeName, value, newValue)
+            }
+          />
+        ) : (
+          <ButtonGroup>
+            {value.options.map((option) => (
+              <AttributeButton
+                key={option.value}
+                label={option.label}
+                attribute={attributeName}
+                value={option.value}
+                multiple={value.multiple}
+                onClick={() =>
+                  addAttribute(
+                    attributeName,
+                    option.value,
+                    value.description,
+                    value.prefix
+                  )
+                }
+              />
+            ))}
+          </ButtonGroup>
+        )}
+        {attributes[attributeName] && (
+          <Button
+            variant='contained'
+            color='error'
+            onClick={() => removeAttribute(attributeName)}
+          >
+            {/* Remove {value.name} */}X
+          </Button>
+        )}
+      </div>
+    )
+  );
+  useEffect(() => {
+    const newHandleChipClickFunctions = {};
+    const newHandleDeleteChipFunctions = {};
+
+    for (const chipValue of Object.values(photoChips)) {
+      for (const chip of chipValue.chips) {
+        let newAttribute = chip.label ? chip.label + ', ' + chip.value : chip;
+
+        newHandleChipClickFunctions[newAttribute] = () => {
+          setSelectedChips((prevChips) => {
+            if (prevChips.includes(newAttribute)) {
+              return prevChips.filter((chip) => chip !== newAttribute);
+            } else {
+              return [...prevChips, newAttribute];
+            }
+          });
+        };
+
+        newHandleDeleteChipFunctions[newAttribute] = () => {
+          setSelectedChips((prevChips) =>
+            prevChips.filter((chip) => chip !== newAttribute)
+          );
+        };
+      }
+    }
+
+    setHandleChipClickFunctions(newHandleChipClickFunctions);
+    setHandleDeleteChipFunctions(newHandleDeleteChipFunctions);
+  }, []);
 
   const handleMainInput = (event) => {
     setUserInput(event.target.value);
@@ -285,52 +356,19 @@ function App() {
                     Parameters
                   </Typography>
                   {Object.entries(attributeOptions).map(([key, value]) => (
-                    <div key={key}>
-                      <div>{value.name}</div>
-                      {/* <p>{value.description}</p> */}
-                      {console.log(value.max)}
-                      {value.slider ? (
-                        <Slider
-                          min={0}
-                          max={value.max}
-                          step={10}
-                          marks
-                          onChange={(event, newValue) =>
-                            onSliderChange(key, value, newValue)
-                          }
-                        />
-                      ) : (
-                        <ButtonGroup>
-                          {value.options.map((option) => (
-                            <AttributeButton
-                              key={option.value}
-                              label={option.label}
-                              attribute={key}
-                              value={option.value}
-                              multiple={value.multiple}
-                              onClick={() =>
-                                addAttribute(
-                                  key,
-                                  option.value,
-                                  value.description,
-                                  value.prefix
-                                )
-                              }
-                            />
-                          ))}
-                        </ButtonGroup>
-                      )}
-
-                      {attributes[key] && (
-                        <Button
-                          variant='contained'
-                          color='error'
-                          onClick={() => removeAttribute(key)}
-                        >
-                          {/* Remove {value.name} */}X
-                        </Button>
-                      )}
-                    </div>
+                    <AttributeGroup
+                      key={key}
+                      value={value}
+                      attributeName={key}
+                      onSliderChange={onSliderChange}
+                      addAttribute={addAttribute}
+                      removeAttribute={removeAttribute}
+                      defaultInfo={defaultInfo}
+                      currentAttribute={currentAttribute}
+                      setAttributeDescription={setAttributeDescription}
+                      setAspectWidth={setAspectWidth}
+                      setAspectHeight={setAspectHeight}
+                    />
                   ))}
                 </Grid>
 
@@ -407,25 +445,28 @@ function App() {
                         </AccordionSummary>
                         <AccordionDetails>
                           <Grid container spacing={3}>
-                            {value.chips.map((chip, index) => (
-                              <Grid item key={index}>
-                                <Chip
-                                  key={index}
-                                  label={chip.label ? chip.label : chip}
-                                  variant='outlined'
-                                  onClick={handleChipClick(chip)}
-                                  onDelete={
-                                    isChipSelected(chip)
-                                      ? () => handleDeleteChip(chip)
-                                      : undefined
-                                  }
-                                  value={chip}
-                                  color={
-                                    isChipSelected(chip) ? 'success' : 'default'
-                                  }
-                                />
-                              </Grid>
-                            ))}
+                            {value.chips.map((chip, index) => {
+                              let newAttribute = chip.label
+                                ? chip.label + ', ' + chip.value
+                                : chip;
+                              return (
+                                <Grid item key={index}>
+                                  <MemoizedChip
+                                    key={index}
+                                    chip={chip}
+                                    selected={selectedChips.includes(
+                                      newAttribute
+                                    )}
+                                    onClick={
+                                      handleChipClickFunctions[newAttribute]
+                                    }
+                                    onDelete={
+                                      handleDeleteChipFunctions[newAttribute]
+                                    }
+                                  />
+                                </Grid>
+                              );
+                            })}
                           </Grid>
                         </AccordionDetails>
                       </Accordion>
@@ -456,27 +497,28 @@ function App() {
                           </AccordionSummary>
                           <AccordionDetails>
                             <Grid container spacing={3}>
-                              {categoryValue.chips.map((chip, index) => (
-                                <Grid item key={index}>
-                                  <Chip
-                                    key={index}
-                                    label={chip}
-                                    variant='outlined'
-                                    onClick={handleChipClick(chip)}
-                                    onDelete={
-                                      isChipSelected(chip)
-                                        ? () => handleDeleteChip(chip)
-                                        : undefined
-                                    }
-                                    value={chip}
-                                    color={
-                                      isChipSelected(chip)
-                                        ? 'success'
-                                        : 'default'
-                                    }
-                                  />
-                                </Grid>
-                              ))}
+                              {categoryValue.chips.map((chip, index) => {
+                                let newAttribute = chip.label
+                                  ? chip.label + ', ' + chip.value
+                                  : chip;
+                                return (
+                                  <Grid item key={index}>
+                                    <MemoizedChip
+                                      key={index}
+                                      chip={chip}
+                                      selected={selectedChips.includes(
+                                        newAttribute
+                                      )}
+                                      onClick={
+                                        handleChipClickFunctions[newAttribute]
+                                      }
+                                      onDelete={
+                                        handleDeleteChipFunctions[newAttribute]
+                                      }
+                                    />
+                                  </Grid>
+                                );
+                              })}
                             </Grid>
                           </AccordionDetails>
                         </Accordion>

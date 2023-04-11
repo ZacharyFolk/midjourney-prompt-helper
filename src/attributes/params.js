@@ -20,6 +20,7 @@ export const attributeOptions = {
     max: 100,
     slider: true,
     prefix: '--chaos:',
+    default: 50,
   },
   quality: {
     name: 'Quality',
