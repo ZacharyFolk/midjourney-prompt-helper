@@ -4,6 +4,7 @@ export const attributeOptions = {
     description:
       'The default aspect ration is 1:1. Common aspect ratios include 5:4 for frame and print ratio, 3:2 common in print photography, and 7:4 close to HD TV and smartphone screens.',
     prefix: '--ar:',
+    groupId: 'aspectRatio',
     options: [
       { value: '2:3', label: '2:3' },
       { value: '3:2', label: '3:2' },
@@ -23,6 +24,7 @@ export const attributeOptions = {
       { value: '.5', label: '.5' },
     ],
     prefix: '--quality',
+    groupId: 'quality',
   },
 };
 

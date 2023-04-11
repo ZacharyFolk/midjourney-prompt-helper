@@ -4,10 +4,14 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+import { SelectionProvider } from './context/SelectionContext';
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <SelectionProvider>
+      <App />
+    </SelectionProvider>
   </React.StrictMode>
 );
 

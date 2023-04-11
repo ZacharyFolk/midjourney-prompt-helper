@@ -1,12 +1,7 @@
-import React, { memo, useState, useEffect, useCallback } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Box,
-  ButtonGroup,
-  Chip,
   Grid,
   Container,
   IconButton,
@@ -17,11 +12,14 @@ import {
   Stack,
   InputAdornment,
 } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { attributeOptions } from './attributes/params';
 import { photoChips } from './attributes/chipObject';
 import { artistChips } from './attributes/artistsObject';
+import AccordionGroup from './components/AccordionGroup';
+import { ParamGroup } from './components/ParamGroup';
 import RedditImageScraper from './components/RedditImageScraper';
+
+import { useSelectionContext } from './context/SelectionContext';
 import { CopyAll } from '@mui/icons-material';
 import './App.css';
 const theme = createTheme({
@@ -41,173 +39,45 @@ const StyledBox = styled(Box)(({ theme }) => ({
 function App() {
   const defaultInfo =
     'Here you will find more information about any parameter or attribute.  Just click on the attribute you want to learn more about.';
-  const [attributes, setAttributes] = useState({});
-  const [selectedChips, setSelectedChips] = useState([]);
-  const [selectedParams, setSelectedParams] = useState([]);
 
-  const [aspectRatio, setAspectRatio] = useState({ width: 1, height: 1 });
-  const [attributeDescription, setAttributeDescription] = useState(defaultInfo);
-  const [currentAttribute, setCurrentAttribute] = useState('');
+  // const [selectedParams, setSelectedParams] = useState([]);
+
+  const [paramDesc, setParamDesc] = useState(defaultInfo);
   const [expanded, setExpanded] = useState(false);
   const [userInput, setUserInput] = useState('');
 
-  const addAttribute = useCallback((category, attribute, desc, prefix) => {
-    const prefixedAttribute = prefix + attribute; // append the prefix to the attribute value
-    setAttributeDescription(desc);
-    setCurrentAttribute(prefix);
+  const { selectedChips, selectedParams } = useSelectionContext();
 
-    // tracking this just to show example aspect ration in help box
-    if (prefix === '--ar:') {
-      const [width, height] = attribute.split(':');
-      setAspectRatio({ width, height });
-    }
-
-    setAttributes((prevAttributes) => ({
-      ...prevAttributes,
-      [category]: prefixedAttribute,
-    }));
-  }, []);
-
-  const removeAttribute = useCallback((category) => {
-    if (category === 'aspectRatio') {
-      setAspectRatio({ width: 1, height: 1 });
-    }
-    setAttributeDescription(defaultInfo);
-    setCurrentAttribute('');
-    setAttributes((prevAttributes) => {
-      const newAttributes = { ...prevAttributes };
-      delete newAttributes[category];
-      return newAttributes;
-    });
-  }, []);
-
-  const AttributeGroup = memo(
-    ({ attributeName, value, addAttribute, removeAttribute }) => (
-      <div>
-        <div>{value.name}</div>
-
-        <ButtonGroup>
-          {value.options.map((option) => (
-            <AttributeButton
-              key={option.value}
-              label={option.label}
-              attribute={attributeName}
-              value={option.value}
-              multiple={value.multiple}
-              onClick={() =>
-                addAttribute(
-                  attributeName,
-                  option.value,
-                  value.description,
-                  value.prefix
-                )
-              }
-            />
-          ))}
-        </ButtonGroup>
-
-        {attributes[attributeName] && (
-          <Button
-            variant='contained'
-            color='error'
-            onClick={() => removeAttribute(attributeName)}
-          >
-            {/* Remove {value.name} */}X
-          </Button>
-        )}
-      </div>
-    )
-  );
-  const AttributeButton = memo(({ label, attribute, onClick }) => (
-    <Button onClick={() => onClick(attribute)} color='secondary'>
-      {label}
-    </Button>
-  ));
-
-  const handleChange = (panel) => (event, isExpanded) => {
+  const handleChange = (panel) => (isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
 
   const buildPromptString = () => {
-    const attributeString = Object.values(attributes).join(' ');
+    // const attributeString = Object.values(attributes).join(' ');
     const chipString = Object.values(selectedChips).join(' ');
-    return `MidJourney ${userInput} ${chipString} ${attributeString}`;
+    const paramString = selectedParams.map((param) => param.value).join(' ');
+
+    return `/imagine prompt: ${userInput} ${chipString} ${paramString}`;
   };
-
-  // ACCORDION
-
-  function AccordionGroup({ items, expanded, handleChange, MemoizedChip }) {
-    return (
-      <div>
-        {items.map(([key, value]) => (
-          <Accordion
-            key={key}
-            expanded={expanded === key}
-            onChange={handleChange(key)}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls={`${key}-content`}
-              id={`${key}-header`}
-            >
-              <Typography sx={{ width: '33%', flexShrink: 0 }}>
-                {value.name}
-              </Typography>
-              <Typography sx={{ color: 'text.secondary' }}>
-                {value.description}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Grid container spacing={3}>
-                {value.chips.map((chip, index) => (
-                  <Grid item key={index}>
-                    <MemoizedChip chip={chip} />
-                  </Grid>
-                ))}
-              </Grid>
-            </AccordionDetails>
-          </Accordion>
-        ))}
-      </div>
-    );
-  }
-
-  // CHIPS
-
-  const MemoizedChip = memo(({ chip }) => {
-    const attribute = chip.label ? chip.label + ', ' + chip.value : chip;
-    const selected = selectedChips.includes(attribute);
-    const handleClick = () => {
-      if (selected) {
-        setSelectedChips((prevChips) =>
-          prevChips.filter((chip) => chip !== attribute)
-        );
-      } else {
-        setSelectedChips((prevChips) => [...prevChips, attribute]);
-      }
-    };
-
-    const handleDelete = () => {
-      setSelectedChips((prevChips) =>
-        prevChips.filter((chip) => chip !== attribute)
-      );
-    };
-    return (
-      <Chip
-        label={chip.label ? chip.label : chip}
-        variant='outlined'
-        onClick={handleClick}
-        onDelete={selected ? handleDelete : undefined}
-        value={chip}
-        color={selected ? 'success' : 'default'}
-      />
-    );
-  });
 
   const handleMainInput = (event) => {
     setUserInput(event.target.value);
   };
 
+  // Method to update parameter info section
+  useEffect(() => {
+    if (selectedParams) {
+      const selectedParam =
+        selectedParams.length > 0
+          ? selectedParams[selectedParams.length - 1]
+          : null;
+
+      if (selectedParam) {
+        const groupId = selectedParam.groupId;
+        setParamDesc(attributeOptions[groupId].description);
+      }
+    }
+  }, [selectedParams]);
   return (
     <ThemeProvider theme={theme}>
       <StyledBox>
@@ -295,64 +165,22 @@ function App() {
                   >
                     Parameters
                   </Typography>
+
                   {Object.entries(attributeOptions).map(([key, value]) => (
-                    <AttributeGroup
-                      key={key}
-                      value={value}
-                      attributeName={key}
-                      addAttribute={addAttribute}
-                      removeAttribute={removeAttribute}
-                      defaultInfo={defaultInfo}
-                      currentAttribute={currentAttribute}
-                      setAttributeDescription={setAttributeDescription}
-                    />
+                    <ParamGroup key={key} param={value} />
                   ))}
                 </Grid>
 
                 <Grid item xs={5}>
                   <Grid item xs={12}>
                     <Grid container alignItems='center' justifyContent='center'>
-                      {currentAttribute === '--ar:' ? (
-                        <>
-                          <Grid item xs={8}>
-                            <div
-                              dangerouslySetInnerHTML={{
-                                __html: attributeDescription,
-                              }}
-                            />
-                          </Grid>
-                          <Grid
-                            item
-                            xs={4}
-                            sx={{
-                              display: 'flex',
-                              justifyContent: 'center',
-                            }}
-                          >
-                            <Box
-                              sx={{
-                                width: aspectRatio.width * 20,
-                                height: aspectRatio.height * 20,
-                                backgroundColor: 'secondary.dark',
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                textAlign: 'center',
-                              }}
-                            >
-                              {aspectRatio.width} : {aspectRatio.height}
-                            </Box>
-                          </Grid>
-                        </>
-                      ) : (
-                        <Grid item xs={12}>
-                          <div
-                            dangerouslySetInnerHTML={{
-                              __html: attributeDescription,
-                            }}
-                          />
-                        </Grid>
-                      )}
+                      <Grid item xs={12}>
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: paramDesc,
+                          }}
+                        />
+                      </Grid>
                     </Grid>
                   </Grid>
                 </Grid>
@@ -366,7 +194,6 @@ function App() {
                     items={Object.entries(photoChips)}
                     expanded={expanded}
                     handleChange={handleChange}
-                    MemoizedChip={MemoizedChip}
                   />
                   <Typography variant='h5' component='h2'>
                     Artists and Styles
@@ -375,8 +202,7 @@ function App() {
                     items={Object.entries(artistChips)}
                     expanded={expanded}
                     handleChange={handleChange}
-                    MemoizedChip={MemoizedChip}
-                  />{' '}
+                  />
                 </Grid>
               </Grid>
             </Grid>
