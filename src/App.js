@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import {
   Box,
@@ -24,7 +24,7 @@ import { CopyAll } from '@mui/icons-material';
 import './App.css';
 const theme = createTheme({
   palette: {
-    mode: 'dark', // or 'dark'
+    mode: 'dark',
   },
   spacing: 4,
 });
@@ -53,10 +53,8 @@ function App() {
   };
 
   const buildPromptString = () => {
-    // const attributeString = Object.values(attributes).join(' ');
     const chipString = Object.values(selectedChips).join(' ');
     const paramString = selectedParams.map((param) => param.value).join(' ');
-
     return `/imagine prompt: ${userInput} ${chipString} ${paramString}`;
   };
 

@@ -1,7 +1,24 @@
 import { createContext, useContext, useState } from 'react';
+
+/**
+ * @typedef SelectionContextType
+ * @property {Array} selectedChips - An array of selected chips.
+ * @property {Array} selectedParams - An array of selected parameters.
+ * @property {function} toggleChipSelection - Function to toggle chip selection.
+ * @property {function} toggleParamSelection - Function to toggle parameter selection.
+ */
+
+/**
+ * Selection context.
+ * @type {React.Context<SelectionContextType>}
+ */
 export const SelectionContext = createContext();
 
-export function useSelectionContext() {
+/**
+ * Hook to use the selection context.
+ * @returns {SelectionContextType} The selection context value.
+ * @throws Will throw an error if not used within a SelectionProvider.
+ */ export function useSelectionContext() {
   const context = useContext(SelectionContext);
   if (!context) {
     throw new Error(
@@ -10,7 +27,10 @@ export function useSelectionContext() {
   }
   return context;
 }
-
+/**
+ * Hook to manage selection state.
+ * @returns {SelectionContextType} The selection state and related functions.
+ */
 function useSelection() {
   const [selectedParams, setSelectedParams] = useState([]);
 
@@ -43,7 +63,16 @@ function useSelection() {
     toggleParamSelection: toggleParamSelection,
   };
 }
-
+/**
+ * SelectionProvider component.
+ *
+ * @component
+ * @example
+ * <SelectionProvider>{children}</SelectionProvider>
+ * @param {Object} props - The props object.
+ * @param {React.ReactNode} props.children - The children elements.
+ * @returns {React.Element} The rendered SelectionProvider component.
+ */
 export function SelectionProvider({ children }) {
   const selection = useSelection();
 

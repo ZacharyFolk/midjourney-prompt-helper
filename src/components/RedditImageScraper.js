@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Box, ImageList, ImageListItem } from '@mui/material';
-
+/**
+ * RedditImageScraper component.
+ * Fetches and displays images from a specified subreddit.
+ *
+ * @component
+ * @example
+ * <RedditImageScraper subreddit="earthporn" />
+ * @param {Object} props - The props object.
+ * @param {string} props.subreddit - The subreddit from which to fetch images.
+ * @returns {React.Element} The rendered RedditImageScraper component.
+ */
 function RedditImageScraper({ subreddit }) {
   const [images, setImages] = useState([]);
 
