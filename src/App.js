@@ -12,6 +12,8 @@ import {
   Stack,
   InputAdornment,
   Link,
+  Popover,
+  Paper,
 } from '@mui/material';
 import { attributeOptions } from './attributes/params';
 import { photoChips } from './attributes/chipObject';
@@ -28,6 +30,9 @@ import {
   Reddit,
   KeyboardDoubleArrowRight,
   KeyboardDoubleArrowLeft,
+  Twitter,
+  GitHub,
+  HelpOutline,
 } from '@mui/icons-material';
 import './App.css';
 const theme = createTheme({
@@ -46,7 +51,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
 
 function App() {
   const defaultInfo =
-    '<h2>Docs</h2><p>Parameters set some important things for your image like the size and quality.  </p> Select a parameter value to find out more about this option. </p> ';
+    '<h2>Docs</h2><p>Parameters are options added to the end of the prompt to change how an image geneartes.</p><span style="font-size: 1.2em"> &#8612; </span> Select a value to find out more about each parameter. </p> <p>View more info at <a href="https://docs.midjourney.com/docs" target="_blank"> MidJourney documentation &#129125;</a> <i>(opens a new window)</i> </p>';
 
   // const [selectedParams, setSelectedParams] = useState([]);
 
@@ -56,7 +61,8 @@ function App() {
   const [editInput, setEditInput] = useState('');
   const [isDisabled, setIsDisabled] = useState(true);
   const [textFieldIcons, setTextFieldIcons] = useState(false);
-
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
   const { selectedChips, selectedParams, resetSelection } =
     useSelectionContext();
 
@@ -78,6 +84,12 @@ function App() {
     resetSelection();
   };
 
+  const handleEnhanceOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleEnhanceClose = () => {
+    setAnchorEl(null);
+  };
   // Method to update parameter info section
   useEffect(() => {
     if (selectedParams) {
@@ -100,7 +112,7 @@ function App() {
         style={{ position: 'absolute', top: 50, right: 10, display: 'flex' }}
       >
         <Stack>
-          {/* <IconButton
+          <IconButton
             aria-label='copy'
             color='error'
             onClick={() => {
@@ -108,7 +120,7 @@ function App() {
             }}
           >
             <DeleteForever />
-          </IconButton> */}
+          </IconButton>
           <IconButton
             aria-label='copy'
             color='success'
@@ -128,14 +140,72 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <StyledBox>
-        <Container maxWidth='xl'>
-          <Grid container spacing={4}>
-            <Grid item xs={12}>
-              <Box sx={{ textAlign: 'center' }}>
-                <h1>Midjourney Prompt Helper</h1>
-              </Box>
+        <Container maxWidth='x2'>
+          <Grid container spacing={2} alignItems='center'>
+            <Grid item xs={8}>
+              <h1>Midjourney Prompt Helper</h1>
             </Grid>
 
+            <Grid item xs={4}>
+              <Grid
+                container
+                spacing={2}
+                sx={{
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <IconButton
+                  aria-label='copy'
+                  color='success'
+                  onClick={() =>
+                    navigator.clipboard.writeText(buildPromptString())
+                  }
+                >
+                  <HelpOutline />
+                </IconButton>
+                <IconButton
+                  aria-label='copy'
+                  color='success'
+                  onClick={() =>
+                    navigator.clipboard.writeText(buildPromptString())
+                  }
+                >
+                  <Twitter />
+                </IconButton>
+                <IconButton
+                  aria-label='copy'
+                  color='success'
+                  onClick={() =>
+                    navigator.clipboard.writeText(buildPromptString())
+                  }
+                >
+                  <Twitter />
+                </IconButton>
+                <IconButton
+                  aria-label='copy'
+                  color='success'
+                  onClick={() =>
+                    navigator.clipboard.writeText(buildPromptString())
+                  }
+                >
+                  <Reddit />
+                </IconButton>
+                <IconButton
+                  aria-label='copy'
+                  color='success'
+                  onClick={() =>
+                    navigator.clipboard.writeText(buildPromptString())
+                  }
+                >
+                  <GitHub />
+                </IconButton>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <hr />
+            </Grid>
             <Grid item xs={7}>
               <Stack
                 spacing={10}
@@ -188,16 +258,76 @@ function App() {
             </Grid>
             <Grid item xs={1}>
               <Stack style={{ marginTop: '10px' }}>
-                <IconButton aria-label='copy' color='info'>
+                <IconButton
+                  aria-label='copy'
+                  color='info'
+                  onMouseEnter={handleEnhanceOpen}
+                  onMouseLeave={handleEnhanceClose}
+                  style={{ opacity: userInput ? 1 : 0.2 }}
+                >
                   <KeyboardDoubleArrowRight /> <KeyboardDoubleArrowRight />
                 </IconButton>
+                <Popover
+                  id='enhance_prompt_popover'
+                  open={open}
+                  sx={{
+                    pointerEvents: 'none',
+                  }}
+                  anchorEl={anchorEl}
+                  onClose={handleEnhanceClose}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                  }}
+                  disableRestoreFocus
+                >
+                  <Paper
+                    elevation={3}
+                    sx={{
+                      p: 8,
+                      width: 240,
+                      height: 280,
+                    }}
+                  >
+                    <Typography
+                      sx={{ typography: 'h6', marginBottom: 4 }}
+                      color='secondary'
+                    >
+                      Enhance your prompt!
+                    </Typography>
+                    <Typography color='success'>
+                      Clicking this sends your prompt to HuggingFace to generate
+                      an experimental prompt enhancement.
+                    </Typography>
+                    {!userInput ? (
+                      <Typography color='error' sx={{ marginTop: 4 }}>
+                        You need to enter your ideas into the input first!
+                      </Typography>
+                    ) : (
+                      <>
+                        <Typography sx={{ marginTop: 4 }}>
+                          It takes a few seconds to generate, so please be
+                          patient.
+                        </Typography>
+                        <Typography sx={{ marginTop: 4 }}>
+                          When ready, click &#171;&#171; to send it back to the
+                          final prompt!
+                        </Typography>
+                      </>
+                    )}
+                  </Paper>
+                </Popover>
                 <IconButton aria-label='copy' color='info'>
                   <KeyboardDoubleArrowLeft /> <KeyboardDoubleArrowLeft />
                 </IconButton>
               </Stack>
             </Grid>
             <Grid item xs={4}>
-              <h3>Enhanced prompt</h3>
+              <h3 style={{ marginBottom: '30px' }}>Enhanced prompt</h3>
               <TextField
                 id='outlined-multiline-static'
                 value=''
@@ -205,10 +335,10 @@ function App() {
                 rows={4}
                 fullWidth
                 disabled={isDisabled}
+                placeholder='Your enhanced prompt will appear here!'
               />
             </Grid>
           </Grid>
-
           <Grid
             container
             spacing={10}
@@ -216,69 +346,74 @@ function App() {
           >
             <Grid item xs={8}>
               <Grid container spacing={4}>
-                <Grid item xs={7}>
-                  <Typography
-                    variant='h5'
-                    component='h2'
-                    style={{ marginTop: '20px', marginBottom: '20px' }}
-                  >
-                    Parameters
-                  </Typography>
+                <Grid item xs={6}>
+                  <Box sx={{ flexGrow: 1 }}>
+                    <Typography
+                      variant='h5'
+                      component='h2'
+                      style={{ marginTop: '20px', marginBottom: '20px' }}
+                    >
+                      Parameters
+                    </Typography>
 
-                  {Object.entries(attributeOptions).map(([key, value]) => (
-                    <ParamGroup key={key} param={value} />
-                  ))}
+                    {Object.entries(attributeOptions).map(([key, value]) => (
+                      <ParamGroup key={key} param={value} />
+                    ))}
+                  </Box>
                 </Grid>
 
-                <Grid item xs={5}>
+                <Grid item xs={6}>
                   <Grid item xs={12}>
                     <Grid container alignItems='center' justifyContent='center'>
                       <Grid item xs={12}>
-                        <div
-                          dangerouslySetInnerHTML={{
-                            __html: paramDesc,
-                          }}
-                        />
+                        <Paper elevation={1} style={{ padding: '20px' }}>
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: paramDesc,
+                            }}
+                          />
+                        </Paper>
                       </Grid>
                     </Grid>
                   </Grid>
                 </Grid>
               </Grid>
-              <Grid container spacing={4}>
-                <Grid item xs={12}>
-                  <Typography variant='h5' component='h2'>
-                    Photography
-                  </Typography>
-                  <AccordionGroup
-                    items={Object.entries(photoChips)}
-                    expanded={expanded}
-                    handleChange={handleChange}
-                  />
-                  <Typography variant='h5' component='h2'>
-                    Artists and Styles
-                  </Typography>
-                  <AccordionGroup
-                    items={Object.entries(artistChips)}
-                    expanded={expanded}
-                    handleChange={handleChange}
-                  />
-                </Grid>
-              </Grid>
             </Grid>
             <Grid item xs={4}>
-              <h2>
-                Latest posts from r/MidJourney
-                <Link
-                  href='https://www.reddit.com/r/midjourney/'
-                  target='_blank'
-                  color='inherit'
-                >
-                  <IconButton aria-label='copy' color='warning'>
-                    <Reddit />
-                  </IconButton>
-                </Link>
-              </h2>
-              <RedditImageScraper subreddit='midjourney' />
+              <Paper elevation={6} style={{ padding: '20px' }}>
+                <h2>
+                  Latest posts from r/MidJourney
+                  <Link
+                    href='https://www.reddit.com/r/midjourney/'
+                    target='_blank'
+                    color='inherit'
+                  >
+                    <IconButton aria-label='copy' color='warning'>
+                      <Reddit />
+                    </IconButton>
+                  </Link>
+                </h2>
+                <RedditImageScraper subreddit='midjourney' />
+              </Paper>
+            </Grid>
+
+            <Grid item xs={12}>
+              <Typography variant='h5' component='h2'>
+                Photography
+              </Typography>
+              <AccordionGroup
+                items={Object.entries(photoChips)}
+                expanded={expanded}
+                handleChange={handleChange}
+              />
+              <Typography variant='h5' component='h2'>
+                Artists and Styles
+              </Typography>
+              <AccordionGroup
+                items={Object.entries(artistChips)}
+                expanded={expanded}
+                handleChange={handleChange}
+              />
             </Grid>
           </Grid>
         </Container>

@@ -48,3 +48,7 @@ ul {
 li {
   padding: 10px 0;
 }
+a:link,
+a:visited {
+  color: #90caf9;
+}
