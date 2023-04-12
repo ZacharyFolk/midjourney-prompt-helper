@@ -1,9 +1,20 @@
 export const attributeOptions = {
+  versions: {
+    name: 'Version Parameters',
+    description:
+      '<h2>Model Version Parameters</h2><p>Midjourney routinely releases new model versions to improve efficiency, coherency, and quality. Different models excel at different types of images</p><ul><li>Niji : An alternative model focused on anime style images.</li><li>High Definition : an early alternative Model that produces larger, less consistent images. This algorithm may be suitable for abstract and landscape images.</li><li>Test uses special test model.</li><li>Testp is photography focused test model.</li></ul>',
+
+    groupId: 'versions',
+    options: [
+      { value: 'niji', label: 'Niji' },
+      { value: 'hd', label: 'HD' },
+    ],
+  },
   aspectRatio: {
     name: 'Aspect Ratio',
     description:
-      'The default aspect ration is 1:1. Common aspect ratios include 5:4 for frame and print ratio, 3:2 common in print photography, and 7:4 close to HD TV and smartphone screens.',
-    prefix: '--ar:',
+      '<h2>Aspect Ratio</h2><p>Common aspect ratios include: </p><ul> <li>1:1 default value is square</li><li>3:2 common in print photography</li>  <li> 5:4 for frame and print ratio</li><li> 7:4 HDTV and smartphone screens.</li></ul>',
+    prefix: '--ar ',
     groupId: 'aspectRatio',
     options: [
       { value: '2:3', label: '2:3' },

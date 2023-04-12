@@ -11,6 +11,7 @@ import {
   Button,
   Stack,
   InputAdornment,
+  Link,
 } from '@mui/material';
 import { attributeOptions } from './attributes/params';
 import { photoChips } from './attributes/chipObject';
@@ -20,7 +21,14 @@ import { ParamGroup } from './components/ParamGroup';
 import RedditImageScraper from './components/RedditImageScraper';
 
 import { useSelectionContext } from './context/SelectionContext';
-import { CopyAll } from '@mui/icons-material';
+import {
+  CopyAll,
+  TaskAlt,
+  DeleteForever,
+  Reddit,
+  KeyboardDoubleArrowRight,
+  KeyboardDoubleArrowLeft,
+} from '@mui/icons-material';
 import './App.css';
 const theme = createTheme({
   palette: {
@@ -38,15 +46,19 @@ const StyledBox = styled(Box)(({ theme }) => ({
 
 function App() {
   const defaultInfo =
-    'Here you will find more information about any parameter or attribute.  Just click on the attribute you want to learn more about.';
+    '<h2>Docs</h2><p>Parameters set some important things for your image like the size and quality.  </p> Select a parameter value to find out more about this option. </p> ';
 
   // const [selectedParams, setSelectedParams] = useState([]);
 
   const [paramDesc, setParamDesc] = useState(defaultInfo);
   const [expanded, setExpanded] = useState(false);
   const [userInput, setUserInput] = useState('');
+  const [editInput, setEditInput] = useState('');
+  const [isDisabled, setIsDisabled] = useState(true);
+  const [textFieldIcons, setTextFieldIcons] = useState(false);
 
-  const { selectedChips, selectedParams } = useSelectionContext();
+  const { selectedChips, selectedParams, resetSelection } =
+    useSelectionContext();
 
   const handleChange = (panel) => (isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -60,6 +72,10 @@ function App() {
 
   const handleMainInput = (event) => {
     setUserInput(event.target.value);
+  };
+
+  const clearPrompt = () => {
+    resetSelection();
   };
 
   // Method to update parameter info section
@@ -76,6 +92,39 @@ function App() {
       }
     }
   }, [selectedParams]);
+
+  const PromptIcons = () => {
+    return (
+      <InputAdornment
+        position='end'
+        style={{ position: 'absolute', top: 50, right: 10, display: 'flex' }}
+      >
+        <Stack>
+          {/* <IconButton
+            aria-label='copy'
+            color='error'
+            onClick={() => {
+              resetSelection();
+            }}
+          >
+            <DeleteForever />
+          </IconButton> */}
+          <IconButton
+            aria-label='copy'
+            color='success'
+            onClick={() => navigator.clipboard.writeText(buildPromptString())}
+          >
+            <CopyAll />
+          </IconButton>
+        </Stack>
+      </InputAdornment>
+    );
+  };
+
+  const handleFocus = () => {
+    setIsDisabled(false);
+    console.log('wut');
+  };
   return (
     <ThemeProvider theme={theme}>
       <StyledBox>
@@ -109,43 +158,55 @@ function App() {
                   multiline
                   rows={4}
                   fullWidth
-                  disabled
+                  disabled={isDisabled}
                   value={buildPromptString()}
                   InputProps={{
-                    endAdornment: (
-                      <InputAdornment
-                        position='end'
-                        style={{ position: 'absolute', top: 30, right: 10 }}
-                      >
-                        <IconButton
-                          aria-label='copy'
-                          onClick={() =>
-                            navigator.clipboard.writeText(buildPromptString())
-                          }
-                        >
-                          <CopyAll />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
+                    endAdornment: <PromptIcons />,
                   }}
                 />
                 <Stack spacing={2} direction='row'>
-                  <Button variant='text'>Text</Button>
-                  <Button variant='contained'>Contained</Button>
-                  <Button variant='outlined'>Outlined</Button>
+                  <Button
+                    variant='outlined'
+                    color='error'
+                    onClick={() => {
+                      resetSelection();
+                    }}
+                  >
+                    Clear
+                  </Button>
+                  <Button
+                    variant='outlined'
+                    color='success'
+                    onClick={() =>
+                      navigator.clipboard.writeText(buildPromptString())
+                    }
+                  >
+                    Copy
+                  </Button>
                 </Stack>
               </Stack>
             </Grid>
             <Grid item xs={1}>
-              <Button
-                onClick={() =>
-                  navigator.clipboard.writeText(buildPromptString())
-                }
-              >
-                Copy
-              </Button>
+              <Stack style={{ marginTop: '10px' }}>
+                <IconButton aria-label='copy' color='info'>
+                  <KeyboardDoubleArrowRight /> <KeyboardDoubleArrowRight />
+                </IconButton>
+                <IconButton aria-label='copy' color='info'>
+                  <KeyboardDoubleArrowLeft /> <KeyboardDoubleArrowLeft />
+                </IconButton>
+              </Stack>
             </Grid>
-            {/* Next Grid item here  */}
+            <Grid item xs={4}>
+              <h3>Enhanced prompt</h3>
+              <TextField
+                id='outlined-multiline-static'
+                value=''
+                multiline
+                rows={4}
+                fullWidth
+                disabled={isDisabled}
+              />
+            </Grid>
           </Grid>
 
           <Grid
@@ -205,9 +266,19 @@ function App() {
               </Grid>
             </Grid>
             <Grid item xs={4}>
-              <Grid item xs={12} alignItems='flex-start'>
-                {/* <RedditImageScraper subreddit='midjourney' /> */}
-              </Grid>
+              <h2>
+                Latest posts from r/MidJourney
+                <Link
+                  href='https://www.reddit.com/r/midjourney/'
+                  target='_blank'
+                  color='inherit'
+                >
+                  <IconButton aria-label='copy' color='warning'>
+                    <Reddit />
+                  </IconButton>
+                </Link>
+              </h2>
+              <RedditImageScraper subreddit='midjourney' />
             </Grid>
           </Grid>
         </Container>

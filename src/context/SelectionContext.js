@@ -34,10 +34,10 @@ export const SelectionContext = createContext();
 function useSelection() {
   const [selectedParams, setSelectedParams] = useState([]);
 
-  const [selected, setSelected] = useState([]);
+  const [selectedChips, setSelectedChips] = useState([]);
 
   const toggleSelection = (item) => {
-    setSelected((prevSelected) =>
+    setSelectedChips((prevSelected) =>
       prevSelected.includes(item)
         ? prevSelected.filter((i) => i !== item)
         : [...prevSelected, item]
@@ -56,11 +56,20 @@ function useSelection() {
     });
   };
 
+  /** Reset to defaults
+   * @returns {void}
+   */
+
+  const resetSelection = () => {
+    setSelectedParams([]);
+    setSelectedChips([]);
+  };
   return {
-    selectedChips: selected,
+    selectedChips: selectedChips,
     selectedParams: selectedParams,
     toggleChipSelection: toggleSelection,
     toggleParamSelection: toggleParamSelection,
+    resetSelection: resetSelection,
   };
 }
 /**

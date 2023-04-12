@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Button } from '@mui/material';
+import { Button, Grid } from '@mui/material';
 import { useSelectionContext } from '../context/SelectionContext';
 
 /**
@@ -13,19 +13,22 @@ import { useSelectionContext } from '../context/SelectionContext';
  */
 export const ParamGroup = memo(({ param }) => {
   return (
-    <div>
-      <div>{param.name}</div>
-      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+    <Grid container spacing={2}>
+      <Grid item xs={12} sx={{ marginTop: '20px' }}>
+        {param.name}
+      </Grid>
+      <Grid item xs={12}>
         {param.options.map((option) => (
           <ParamButton
             key={option.label}
             label={option.label}
             param={param}
             groupId={param.groupId}
+            value={option.value}
           />
         ))}
-      </div>
-    </div>
+      </Grid>
+    </Grid>
   );
 });
 
@@ -40,9 +43,10 @@ export const ParamGroup = memo(({ param }) => {
  * @param {string} groupId - The group identifier for the button.
  * @returns {React.Element} The rendered ParamButton component.
  */
-const ParamButton = memo(({ label, param }) => {
+const ParamButton = memo(({ label, param, value }) => {
   const { selectedParams, toggleParamSelection } = useSelectionContext();
-  const fullParam = param.prefix + ' ' + label;
+  let pre = param.prefix ? param.prefix : '--';
+  const fullParam = pre + value;
   const isSelected = selectedParams.some((p) => p.value === fullParam);
   const buttonColor = isSelected ? 'secondary' : 'primary';
 

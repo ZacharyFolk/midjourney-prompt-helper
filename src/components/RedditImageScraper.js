@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, ImageList, ImageListItem } from '@mui/material';
+import { Box, ImageList, ImageListItem, Link } from '@mui/material';
 /**
  * RedditImageScraper component.
  * Fetches and displays images from a specified subreddit.
@@ -44,14 +44,20 @@ function RedditImageScraper({ subreddit }) {
     >
       <ImageList cols={3} gap={8} variant='masonry'>
         {images.map((item) => (
-          <ImageListItem key={item.img}>
-            <img
-              src={`${item.img}?w=248&fit=crop&auto=format`}
-              srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
-              alt={item.title}
-              loading='lazy'
-            />
-          </ImageListItem>
+          <Link
+            href={`https://www.reddit.com${item.permalink}`}
+            key={item.img}
+            target='_blank'
+          >
+            <ImageListItem key={item.img}>
+              <img
+                src={`${item.img}?w=248&fit=crop&auto=format`}
+                srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                alt={item.title}
+                loading='lazy'
+              />
+            </ImageListItem>
+          </Link>
         ))}
       </ImageList>
     </Box>
