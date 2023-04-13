@@ -96,6 +96,7 @@ export const UserInput = memo(() => {
     >
       <Input
         placeholder='Type your imaginging here!'
+        variant='outlined'
         fullWidth
         onChange={handleMainInput}
         value={localInput}

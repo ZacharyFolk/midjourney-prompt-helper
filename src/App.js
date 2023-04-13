@@ -2,11 +2,14 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import {
   Box,
+  Button,
   Grid,
   Container,
   Typography,
   TextField,
   Paper,
+  Stack,
+  CircularProgress,
 } from '@mui/material';
 import { attributeOptions } from './attributes/params';
 import { photoChips } from './attributes/chipObject';
@@ -20,6 +23,8 @@ import './App.css';
 import { UserInput } from './components/UserInput';
 import HeadereIcons from './components/HeaderIcons';
 import { EnhancedPromptButtons } from './components/EnhancePromptButtons';
+import { useUserInputContext } from './context/SelectionContext';
+
 const theme = createTheme({
   palette: {
     mode: 'dark',
@@ -34,10 +39,14 @@ const StyledBox = styled(Box)(({ theme }) => ({
 }));
 function App() {
   const [paramDesc, setParamDesc] = useState(defaultInfo);
-  const [textFieldValue, setTextFieldValue] = useState('');
+  const [generatedItems, setGeneratedItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const { setUserInput } = useUserInputContext();
 
   const { selectedParams } = useChipSelectionContext();
-
+  const handleSetGeneratedItems = (items) => {
+    setGeneratedItems(items);
+  };
   // Method to update parameter info section
   useEffect(() => {
     if (selectedParams) {
@@ -53,6 +62,7 @@ function App() {
     }
   }, [selectedParams]);
 
+  const useEnhancedPrompt = (e) => {};
   return (
     <ThemeProvider theme={theme}>
       <StyledBox>
@@ -65,31 +75,92 @@ function App() {
               <HeadereIcons />
             </Grid>
           </Grid>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
+
+          <Grid container spacing={2} alignItems='flex-start'>
+            <Grid item xs={12} marginBottom={10}>
               <hr />
             </Grid>
             <Grid item xs={7}>
               <UserInput />
             </Grid>
             <Grid item xs={1}>
-              <EnhancedPromptButtons setTextFieldValue={setTextFieldValue} />
-            </Grid>
-            <Grid item xs={4}>
-              <Typography variant='h6' style={{ marginBottom: 40 }}>
-                Enhanced prompt
-              </Typography>
-              <TextField
-                id='outlined-multiline-static'
-                value={textFieldValue}
-                multiline
-                rows={4}
-                fullWidth
-                disabled={true}
-                placeholder='Your enhanced prompt will appear here!'
+              <EnhancedPromptButtons
+                setGeneratedItems={handleSetGeneratedItems}
+                setIsLoading={setIsLoading}
               />
             </Grid>
+            <Grid item xs={4}>
+              {generatedItems.length > 0 ? (
+                <Box
+                  sx={{
+                    width: '100%',
+                    maxHeight: 250,
+                    overflowY: 'scroll',
+                  }}
+                >
+                  <Stack style={{ paddingRight: '20px' }}>
+                    {generatedItems.map((item, index) => (
+                      <Button
+                        key={index}
+                        variant='outlined'
+                        style={{
+                          textAlign: 'left',
+                          textTransform: 'none',
+                          justifyContent: 'flex-start',
+                          marginBottom: '20px',
+                        }}
+                        onClick={() => setUserInput(item)}
+                      >
+                        {item}
+                      </Button>
+                    ))}
+                  </Stack>
+                </Box>
+              ) : (
+                <Paper
+                  elevation={3}
+                  sx={{
+                    p: 8,
+                    height: 160,
+                  }}
+                >
+                  {isLoading ? (
+                    <Grid
+                      container
+                      spacing={2}
+                      justifyContent='center'
+                      alignItems='center'
+                      style={{ height: '100%' }}
+                    >
+                      <Grid
+                        item
+                        xs={1}
+                        alignItems='center'
+                        justifyContent='center'
+                      >
+                        <CircularProgress />
+                      </Grid>
+                    </Grid>
+                  ) : (
+                    <>
+                      <Typography
+                        sx={{ typography: 'h6', marginBottom: 4 }}
+                        color='secondary'
+                      >
+                        Generate Prompt Ideas
+                      </Typography>
+                      <Typography color='success'>
+                        Experimental feature to generate more ideas for your
+                        prompt. Try typing a few keywords in the input then
+                        click the blue arrows to generate some ideas ideas!
+                      </Typography>
+                    </>
+                  )}
+                </Paper>
+              )}
+            </Grid>
           </Grid>
+
           <Grid
             container
             spacing={10}
