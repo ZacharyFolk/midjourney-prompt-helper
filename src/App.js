@@ -25,6 +25,8 @@ import HeadereIcons from './components/HeaderIcons';
 import { EnhancedPromptButtons } from './components/EnhancePromptButtons';
 import { useUserInputContext } from './context/SelectionContext';
 
+const VERSION = '0.0.1';
+
 const theme = createTheme({
   palette: {
     mode: 'dark',
@@ -62,17 +64,21 @@ function App() {
     }
   }, [selectedParams]);
 
-  const useEnhancedPrompt = (e) => {};
   return (
     <ThemeProvider theme={theme}>
       <StyledBox>
-        <Container maxWidth='x2'>
+        <Container
+          maxWidth='x2'
+          style={{ paddingLeft: '40px', paddingRight: '40px' }}
+        >
           <Grid container spacing={2} alignItems='center'>
             <Grid item xs={8}>
-              <h1>Midjourney Prompt Helper</h1>
+              <Typography sx={{ typography: 'h6' }}>
+                Midjourney Prompt Helper {VERSION}
+              </Typography>
             </Grid>
             <Grid item xs={4}>
-              <HeadereIcons />
+              <HeadereIcons theme={theme} StyledBox={StyledBox} />
             </Grid>
           </Grid>
 
@@ -143,13 +149,10 @@ function App() {
                     </Grid>
                   ) : (
                     <>
-                      <Typography
-                        sx={{ typography: 'h6', marginBottom: 4 }}
-                        color='secondary'
-                      >
+                      <Typography sx={{ typography: 'h6', marginBottom: 4 }}>
                         Generate Prompt Ideas
                       </Typography>
-                      <Typography color='success'>
+                      <Typography>
                         Experimental feature to generate more ideas for your
                         prompt. Try typing a few keywords in the input then
                         click the blue arrows to generate some ideas ideas!
@@ -168,15 +171,7 @@ function App() {
           >
             <Grid item xs={8}>
               <Grid container spacing={4}>
-                <Grid item xs={6}>
-                  <Box sx={{ flexGrow: 1 }}>
-                    {Object.entries(attributeOptions).map(([key, value]) => (
-                      <ParamGroup key={key} param={value} />
-                    ))}
-                  </Box>
-                </Grid>
-
-                <Grid item xs={6}>
+                <Grid item xs={5}>
                   <Grid item xs={12}>
                     <Grid container alignItems='center' justifyContent='center'>
                       <Grid item xs={12}>
@@ -191,8 +186,17 @@ function App() {
                     </Grid>
                   </Grid>
                 </Grid>
+
+                <Grid item xs={7} style={{ paddingLeft: '40px' }}>
+                  <Box>
+                    {Object.entries(attributeOptions).map(([key, value]) => (
+                      <ParamGroup key={key} param={value} />
+                    ))}
+                  </Box>
+                </Grid>
               </Grid>
             </Grid>
+
             <Grid item xs={4}>
               <Paper elevation={6} style={{ padding: '20px' }}>
                 <Typography variant='h6'>
