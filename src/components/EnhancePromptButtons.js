@@ -1,5 +1,13 @@
 import React, { memo, useState } from 'react';
-import { IconButton, Popover, Paper, Typography, Stack } from '@mui/material';
+import axios from 'axios';
+import {
+  CircularProgress,
+  IconButton,
+  Popover,
+  Paper,
+  Typography,
+  Stack,
+} from '@mui/material';
 import {
   KeyboardDoubleArrowLeft,
   KeyboardDoubleArrowRight,
@@ -7,10 +15,15 @@ import {
 
 import { useUserInputContext } from '../context/SelectionContext';
 
-export const EenhancedPromptButtons = memo(({}) => {
+export const EnhancedPromptButtons = memo(({ setTextFieldValue }) => {
   const { userInput } = useUserInputContext();
   const [anchorElRight, setAnchorElRight] = useState(null);
   const [anchorElLeft, setAnchorElLeft] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [response, setResponse] = useState(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [duration, setDuration] = useState(null);
+  const [averageDuration, setAverageDuration] = useState(null);
   const handleEnhanceOpenRight = (event) => {
     setAnchorElRight(event.currentTarget);
   };
@@ -24,6 +37,31 @@ export const EenhancedPromptButtons = memo(({}) => {
     setAnchorElLeft(null);
   };
 
+  const handleRightClick = () => {
+    if (!userInput) {
+      return;
+    }
+    handleGeneratePrompt();
+  };
+  const handleGeneratePrompt = async () => {
+    setIsGenerating(true);
+
+    try {
+      const requestBody = { data: [userInput] };
+      const response = await axios.post(
+        'https://doevent-prompt-generator.hf.space/run/predict',
+        requestBody,
+        { timeout: 60000 }
+      );
+      console.log(response.data);
+      setResponse(response.data.data[0]);
+      setTextFieldValue(response.data.data[0]);
+    } catch (error) {
+      console.error(error);
+    }
+
+    setIsGenerating(false);
+  };
   return (
     <Stack style={{ marginTop: '80px' }}>
       <IconButton
@@ -31,6 +69,7 @@ export const EenhancedPromptButtons = memo(({}) => {
         color='info'
         onMouseEnter={handleEnhanceOpenRight}
         onMouseLeave={handleEnhanceCloseRight}
+        onClick={handleRightClick}
         style={{ opacity: userInput ? 1 : 0.2 }}
       >
         <KeyboardDoubleArrowRight /> <KeyboardDoubleArrowRight />
@@ -89,6 +128,7 @@ export const EenhancedPromptButtons = memo(({}) => {
         color='info'
         onMouseEnter={handleEnhanceOpenLeft}
         onMouseLeave={handleEnhanceCloseLeft}
+        disabled={!userInput}
         style={{ opacity: userInput ? 1 : 0.2 }}
       >
         <KeyboardDoubleArrowLeft /> <KeyboardDoubleArrowLeft />

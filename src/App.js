@@ -19,7 +19,7 @@ import { defaultInfo } from './text/DefaultInfo';
 import './App.css';
 import { UserInput } from './components/UserInput';
 import HeadereIcons from './components/HeaderIcons';
-import { EenhancedPromptButtons } from './components/EnhancePromptButtons';
+import { EnhancedPromptButtons } from './components/EnhancePromptButtons';
 const theme = createTheme({
   palette: {
     mode: 'dark',
@@ -34,6 +34,8 @@ const StyledBox = styled(Box)(({ theme }) => ({
 }));
 function App() {
   const [paramDesc, setParamDesc] = useState(defaultInfo);
+  const [textFieldValue, setTextFieldValue] = useState('');
+
   const { selectedParams } = useChipSelectionContext();
 
   // Method to update parameter info section
@@ -71,7 +73,7 @@ function App() {
               <UserInput />
             </Grid>
             <Grid item xs={1}>
-              <EenhancedPromptButtons />
+              <EnhancedPromptButtons setTextFieldValue={setTextFieldValue} />
             </Grid>
             <Grid item xs={4}>
               <Typography variant='h6' style={{ marginBottom: 40 }}>
@@ -79,7 +81,7 @@ function App() {
               </Typography>
               <TextField
                 id='outlined-multiline-static'
-                value=''
+                value={textFieldValue}
                 multiline
                 rows={4}
                 fullWidth
