@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useMemo } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import {
   Button,
   Stack,
@@ -6,21 +6,23 @@ import {
   Input,
   InputAdornment,
   IconButton,
+  Tooltip,
 } from '@mui/material';
 import { DeleteForever, CopyAll } from '@mui/icons-material';
 import { useUserInputContext } from '../context/SelectionContext';
 import { useChipSelectionContext } from '../context/SelectionContext';
+import { setSelectionRange } from '@testing-library/user-event/dist/utils';
 
 export const UserInput = memo(() => {
   const { userInput, setUserInput } = useUserInputContext();
   const { selectedChips, selectedParams, resetSelection } =
     useChipSelectionContext();
-  /**
-   * handleMainInput function - handles changes to the main input field
-   * @param {React.SyntheticEvent} event - The event object from the input change
-   */
+
+  const [localInput, setLocalInput] = useState('');
+
   const handleMainInput = useCallback(
     (event) => {
+      setLocalInput(event.target.value);
       setUserInput(event.target.value);
     },
     [setUserInput]
@@ -44,29 +46,39 @@ export const UserInput = memo(() => {
     return `/imagine prompt: ${userInput} ${chipString} ${paramString}`;
   };
 
+  const resetPrompt = () => {
+    setLocalInput('');
+    setUserInput('');
+    resetSelection();
+  };
+
   const PromptIcons = () => {
     return (
       <InputAdornment
         position='end'
-        style={{ position: 'absolute', top: 30, right: 10, display: 'flex' }}
+        style={{ position: 'absolute', bottom: 30, right: 10, display: 'flex' }}
       >
-        <Stack direction='row' spacing={2}>
-          <IconButton
-            aria-label='copy'
-            color='error'
-            onClick={() => {
-              resetSelection();
-            }}
-          >
-            <DeleteForever />
-          </IconButton>
-          <IconButton
-            aria-label='copy'
-            color='success'
-            onClick={() => navigator.clipboard.writeText(buildPromptString())}
-          >
-            <CopyAll />
-          </IconButton>
+        <Stack direction='row' spacing={1}>
+          <Tooltip title='Clear Prompt'>
+            <IconButton
+              aria-label='copy'
+              color='error'
+              onClick={() => {
+                resetPrompt();
+              }}
+            >
+              <DeleteForever />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title='Copy Prompt'>
+            <IconButton
+              aria-label='copy'
+              color='success'
+              onClick={() => navigator.clipboard.writeText(buildPromptString())}
+            >
+              <CopyAll />
+            </IconButton>
+          </Tooltip>
         </Stack>
       </InputAdornment>
     );
@@ -86,6 +98,7 @@ export const UserInput = memo(() => {
         placeholder='Type your imaginging here!'
         fullWidth
         onChange={handleMainInput}
+        value={localInput}
       />
       <TextField
         id='outlined-multiline-static'
@@ -99,24 +112,6 @@ export const UserInput = memo(() => {
           endAdornment: <PromptIcons />,
         }}
       />
-      <Stack spacing={2} direction='row'>
-        <Button
-          variant='outlined'
-          color='error'
-          onClick={() => {
-            resetSelection();
-          }}
-        >
-          Clear
-        </Button>
-        <Button
-          variant='outlined'
-          color='success'
-          onClick={() => navigator.clipboard.writeText(buildPromptString())}
-        >
-          Copy
-        </Button>
-      </Stack>
     </Stack>
   );
 });

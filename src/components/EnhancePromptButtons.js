@@ -9,14 +9,19 @@ import { useUserInputContext } from '../context/SelectionContext';
 
 export const EenhancedPromptButtons = memo(({}) => {
   const { userInput } = useUserInputContext();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-
-  const handleEnhanceOpen = (event) => {
-    setAnchorEl(event.currentTarget);
+  const [anchorElRight, setAnchorElRight] = useState(null);
+  const [anchorElLeft, setAnchorElLeft] = useState(null);
+  const handleEnhanceOpenRight = (event) => {
+    setAnchorElRight(event.currentTarget);
   };
-  const handleEnhanceClose = () => {
-    setAnchorEl(null);
+  const handleEnhanceCloseRight = () => {
+    setAnchorElRight(null);
+  };
+  const handleEnhanceOpenLeft = (event) => {
+    setAnchorElLeft(event.currentTarget);
+  };
+  const handleEnhanceCloseLeft = () => {
+    setAnchorElLeft(null);
   };
 
   return (
@@ -24,26 +29,26 @@ export const EenhancedPromptButtons = memo(({}) => {
       <IconButton
         aria-label='copy'
         color='info'
-        onMouseEnter={handleEnhanceOpen}
-        onMouseLeave={handleEnhanceClose}
+        onMouseEnter={handleEnhanceOpenRight}
+        onMouseLeave={handleEnhanceCloseRight}
         style={{ opacity: userInput ? 1 : 0.2 }}
       >
         <KeyboardDoubleArrowRight /> <KeyboardDoubleArrowRight />
       </IconButton>
       <Popover
-        id='enhance_prompt_popover'
-        open={open}
+        id='enhance_prompt_popover_right'
+        open={Boolean(anchorElRight)}
         sx={{
           pointerEvents: 'none',
         }}
-        anchorEl={anchorEl}
-        onClose={handleEnhanceClose}
+        anchorEl={anchorElRight}
+        onClose={handleEnhanceCloseRight}
         anchorOrigin={{
           vertical: 'top',
           horizontal: 'right',
         }}
         transformOrigin={{
-          vertical: 'top',
+          vertical: 'bottom',
           horizontal: 'left',
         }}
         disableRestoreFocus
@@ -53,7 +58,7 @@ export const EenhancedPromptButtons = memo(({}) => {
           sx={{
             p: 8,
             width: 240,
-            height: 280,
+            height: 240,
           }}
         >
           <Typography
@@ -75,17 +80,51 @@ export const EenhancedPromptButtons = memo(({}) => {
               <Typography sx={{ marginTop: 4 }}>
                 It takes a few seconds to generate, so please be patient.
               </Typography>
-              <Typography sx={{ marginTop: 4 }}>
-                When ready, click &#171;&#171; to send it back to the final
-                prompt!
-              </Typography>
             </>
           )}
         </Paper>
       </Popover>
-      <IconButton aria-label='copy' color='info'>
+      <IconButton
+        aria-label='copy'
+        color='info'
+        onMouseEnter={handleEnhanceOpenLeft}
+        onMouseLeave={handleEnhanceCloseLeft}
+        style={{ opacity: userInput ? 1 : 0.2 }}
+      >
         <KeyboardDoubleArrowLeft /> <KeyboardDoubleArrowLeft />
       </IconButton>
+      <Popover
+        id='retrieve_enhanced_prompt_popover'
+        open={Boolean(anchorElLeft)}
+        sx={{
+          pointerEvents: 'none',
+        }}
+        anchorEl={anchorElLeft}
+        onClose={handleEnhanceCloseLeft}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        disableRestoreFocus
+      >
+        <Paper
+          elevation={3}
+          sx={{
+            p: 8,
+            width: 240,
+            height: 120,
+          }}
+        >
+          <Typography color='success'>
+            When you have a new prompt generated you can click this to send it
+            back to your main prompt builder.
+          </Typography>
+        </Paper>
+      </Popover>
     </Stack>
   );
 });

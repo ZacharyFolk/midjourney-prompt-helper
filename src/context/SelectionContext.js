@@ -62,7 +62,6 @@ function useChipSelection() {
 
 function useUserInput() {
   const [userInput, setUserInput] = useState('');
-
   return {
     userInput,
     setUserInput,
