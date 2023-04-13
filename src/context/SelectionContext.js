@@ -1,51 +1,41 @@
 import { createContext, useContext, useState } from 'react';
 
-/**
- * @typedef SelectionContextType
- * @property {Array} selectedChips - An array of selected chips.
- * @property {Array} selectedParams - An array of selected parameters.
- * @property {function} toggleChipSelection - Function to toggle chip selection.
- * @property {function} toggleParamSelection - Function to toggle parameter selection.
- */
+export const ChipSelectionContext = createContext();
+export const UserInputContext = createContext();
 
-/**
- * Selection context.
- * @type {React.Context<SelectionContextType>}
- */
-export const SelectionContext = createContext();
-
-/**
- * Hook to use the selection context.
- * @returns {SelectionContextType} The selection context value.
- * @throws Will throw an error if not used within a SelectionProvider.
- */ export function useSelectionContext() {
-  const context = useContext(SelectionContext);
+export function useChipSelectionContext() {
+  const context = useContext(ChipSelectionContext);
   if (!context) {
     throw new Error(
-      'useSelectionContext must be used within a SelectionProvider'
+      'useChipSelectionContext must be used within a ChipSelectionProvider'
     );
   }
   return context;
 }
-/**
- * Hook to manage selection state.
- * @returns {SelectionContextType} The selection state and related functions.
- */
-function useSelection() {
+
+export function useUserInputContext() {
+  const context = useContext(UserInputContext);
+  if (!context) {
+    throw new Error(
+      'useUserInputContext must be used within a UserInputProvider'
+    );
+  }
+  return context;
+}
+
+function useChipSelection() {
+  const [selectedChips, setSelectedChips] = useState([]);
   const [selectedParams, setSelectedParams] = useState([]);
 
-  const [selectedChips, setSelectedChips] = useState([]);
-
-  const toggleSelection = (item) => {
+  const toggleChipSelection = (chip) => {
     setSelectedChips((prevSelected) =>
-      prevSelected.includes(item)
-        ? prevSelected.filter((i) => i !== item)
-        : [...prevSelected, item]
+      prevSelected.includes(chip)
+        ? prevSelected.filter((i) => i !== chip)
+        : [...prevSelected, chip]
     );
   };
 
   const toggleParamSelection = (item, groupId) => {
-    console.log('item', item, 'groupId', groupId);
     setSelectedParams((prevSelected) => {
       const otherGroupItems = prevSelected.filter(
         (i) => !i.groupId || i.groupId !== groupId
@@ -56,38 +46,45 @@ function useSelection() {
     });
   };
 
-  /** Reset to defaults
-   * @returns {void}
-   */
-
   const resetSelection = () => {
     setSelectedParams([]);
     setSelectedChips([]);
   };
+
   return {
-    selectedChips: selectedChips,
-    selectedParams: selectedParams,
-    toggleChipSelection: toggleSelection,
-    toggleParamSelection: toggleParamSelection,
-    resetSelection: resetSelection,
+    selectedChips,
+    selectedParams,
+    toggleChipSelection,
+    toggleParamSelection,
+    resetSelection,
   };
 }
-/**
- * SelectionProvider component.
- *
- * @component
- * @example
- * <SelectionProvider>{children}</SelectionProvider>
- * @param {Object} props - The props object.
- * @param {React.ReactNode} props.children - The children elements.
- * @returns {React.Element} The rendered SelectionProvider component.
- */
-export function SelectionProvider({ children }) {
-  const selection = useSelection();
+
+function useUserInput() {
+  const [userInput, setUserInput] = useState('');
+
+  return {
+    userInput,
+    setUserInput,
+  };
+}
+
+export function ChipSelectionProvider({ children }) {
+  const chipSelection = useChipSelection();
 
   return (
-    <SelectionContext.Provider value={selection}>
+    <ChipSelectionContext.Provider value={chipSelection}>
       {children}
-    </SelectionContext.Provider>
+    </ChipSelectionContext.Provider>
+  );
+}
+
+export function UserInputProvider({ children }) {
+  const userInput = useUserInput();
+
+  return (
+    <UserInputContext.Provider value={userInput}>
+      {children}
+    </UserInputContext.Provider>
   );
 }

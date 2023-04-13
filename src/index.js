@@ -4,14 +4,19 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-import { SelectionProvider } from './context/SelectionContext';
+import {
+  ChipSelectionProvider,
+  UserInputProvider,
+} from './context/SelectionContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <SelectionProvider>
-      <App />
-    </SelectionProvider>
+    <ChipSelectionProvider>
+      <UserInputProvider>
+        <App />
+      </UserInputProvider>
+    </ChipSelectionProvider>
   </React.StrictMode>
 );
 

@@ -1,33 +1,40 @@
-import { memo } from 'react';
+import { memo, useCallback } from 'react';
 import { Chip } from '@mui/material';
-import { useSelectionContext } from '../context/SelectionContext';
+
+import { useChipSelectionContext } from '../context/SelectionContext';
+
 /**
  * Represents a memoized chip component.
  * @param {Object} props - The component properties.
  * @param {Object} props.chip - The chip object.
  * @returns {JSX.Element} The memoized chip component.
  */
-export const MemoizedChip = memo(({ chip }) => {
-  const { selectedChips, toggleChipSelection } = useSelectionContext();
-  const attribute = chip.label ? chip.label + ', ' + chip.value : chip;
-  const selected = selectedChips.includes(attribute);
+export const MemoizedChip = memo(
+  ({ chip }) => {
+    const { selectedChips, toggleChipSelection } = useChipSelectionContext();
+    const attribute = chip.label ? chip.label + ', ' + chip.value : chip;
+    const selected = selectedChips.includes(attribute);
 
-  const handleClick = () => {
-    toggleChipSelection(attribute);
-  };
+    const handleClick = useCallback(() => {
+      toggleChipSelection(attribute);
+    }, [attribute, toggleChipSelection]);
 
-  const handleDelete = () => {
-    toggleChipSelection(attribute);
-  };
+    const handleDelete = useCallback(() => {
+      toggleChipSelection(attribute);
+    }, [attribute, toggleChipSelection]);
 
-  return (
-    <Chip
-      label={chip.label ? chip.label : chip}
-      variant='outlined'
-      onClick={handleClick}
-      onDelete={selected ? handleDelete : undefined}
-      value={chip}
-      color={selected ? 'success' : 'default'}
-    />
-  );
-});
+    return (
+      <Chip
+        label={chip.label ? chip.label : chip}
+        variant='outlined'
+        onClick={handleClick}
+        onDelete={selected ? handleDelete : undefined}
+        value={chip}
+        color={selected ? 'success' : 'default'}
+      />
+    );
+  },
+  (prevProps, nextProps) =>
+    prevProps.chip === nextProps.chip &&
+    prevProps.selectedChips === nextProps.selectedChips
+);

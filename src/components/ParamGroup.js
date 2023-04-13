@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { Button, Grid } from '@mui/material';
-import { useSelectionContext } from '../context/SelectionContext';
+import { useChipSelectionContext } from '../context/SelectionContext';
 
 /**
  * ParamGroup component.
@@ -44,7 +44,7 @@ export const ParamGroup = memo(({ param }) => {
  * @returns {React.Element} The rendered ParamButton component.
  */
 const ParamButton = memo(({ label, param, value }) => {
-  const { selectedParams, toggleParamSelection } = useSelectionContext();
+  const { selectedParams, toggleParamSelection } = useChipSelectionContext();
   let pre = param.prefix ? param.prefix : '--';
   const fullParam = pre + value;
   const isSelected = selectedParams.some((p) => p.value === fullParam);
