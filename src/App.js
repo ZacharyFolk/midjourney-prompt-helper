@@ -6,24 +6,29 @@ import {
   Grid,
   Container,
   Typography,
-  TextField,
   Paper,
   Stack,
   CircularProgress,
 } from '@mui/material';
+import { defaultInfo } from './text/DefaultInfo';
 import { attributeOptions } from './attributes/params';
 import { photoChips } from './attributes/chipObject';
 import { artistChips } from './attributes/artistsObject';
-import AccordionGroup from './components/AccordionGroup';
+
+import { genreChips } from './attributes/genreObject';
+
 import { ParamGroup } from './components/ParamGroup';
-import RedditImageScraper from './components/RedditImageScraper';
-import { useChipSelectionContext } from './context/SelectionContext';
-import { defaultInfo } from './text/DefaultInfo';
-import './App.css';
 import { UserInput } from './components/UserInput';
-import HeadereIcons from './components/HeaderIcons';
 import { EnhancedPromptButtons } from './components/EnhancePromptButtons';
 import { useUserInputContext } from './context/SelectionContext';
+import { useChipSelectionContext } from './context/SelectionContext';
+
+import RedditImageScraper from './components/RedditImageScraper';
+import HeadereIcons from './components/HeaderIcons';
+import AccordionGroup from './components/AccordionGroup';
+
+import './App.css';
+import { Reddit } from '@mui/icons-material';
 
 const VERSION = '0.0.1';
 
@@ -49,7 +54,6 @@ function App() {
   const handleSetGeneratedItems = (items) => {
     setGeneratedItems(items);
   };
-  // Method to update parameter info section
   useEffect(() => {
     if (selectedParams) {
       const selectedParam =
@@ -78,7 +82,11 @@ function App() {
               </Typography>
             </Grid>
             <Grid item xs={4}>
-              <HeadereIcons theme={theme} StyledBox={StyledBox} />
+              <HeadereIcons
+                theme={theme}
+                StyledBox={StyledBox}
+                version={VERSION}
+              />
             </Grid>
           </Grid>
 
@@ -149,7 +157,10 @@ function App() {
                     </Grid>
                   ) : (
                     <>
-                      <Typography sx={{ typography: 'h6', marginBottom: 4 }}>
+                      <Typography
+                        variant='h6'
+                        sx={{ mb: 4, color: 'info.main' }}
+                      >
                         Generate Prompt Ideas
                       </Typography>
                       <Typography>
@@ -199,31 +210,61 @@ function App() {
 
             <Grid item xs={4}>
               <Paper elevation={6} style={{ padding: '20px' }}>
-                <Typography variant='h6'>
+                <Typography variant='h6' sx={{ mb: 4, color: 'warning.main' }}>
                   Latest posts from r/MidJourney
                 </Typography>
                 <RedditImageScraper subreddit='midjourney' />
               </Paper>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sx={{ pb: 20 }}>
               <Typography
                 variant='h5'
-                style={{ marginBottom: 20, textTransform: 'uppercase' }}
+                sx={{
+                  mt: 4,
+                  mb: 2,
+
+                  color: 'grey',
+                }}
+              >
+                Mediums and Styles
+              </Typography>
+              <AccordionGroup items={artistChips} />
+
+              <Typography
+                variant='h5'
+                sx={{
+                  mt: 10,
+                  color: 'grey',
+                }}
               >
                 Photography
               </Typography>
-              <AccordionGroup items={photoChips} />
               <Typography
-                variant='h5'
-                style={{
-                  marginBottom: 20,
-                  marginTop: 40,
-                  textTransform: 'uppercase',
+                variant='h6'
+                sx={{
+                  mb: 2,
+                  color: 'darkgrey',
+                  fontStyle: 'italic',
+                  fontSize: '90%',
+                  textIndent: '10px',
                 }}
               >
-                Artists and Styles
+                Some add add additonal values like lens type
               </Typography>
-              <AccordionGroup items={artistChips} />
+              <AccordionGroup items={photoChips} />
+
+              <Typography
+                variant='h5'
+                sx={{
+                  mt: 4,
+                  mb: 2,
+
+                  color: 'grey',
+                }}
+              >
+                Comics and Movies
+              </Typography>
+              <AccordionGroup items={genreChips} />
             </Grid>
           </Grid>
         </Container>

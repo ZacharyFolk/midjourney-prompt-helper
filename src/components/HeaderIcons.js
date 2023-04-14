@@ -17,23 +17,29 @@ import {
   Reddit,
   GitHub,
   LinkedIn,
+  Home,
 } from '@mui/icons-material';
+
+import weHear from './../images/we-here-for-you.png';
+
 const style = {
   position: 'absolute',
-  top: '30%',
+  top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
   bgcolor: 'background.paper',
-
   width: '50%',
+  maxWidth: 800,
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
 };
-export default function HeadereIcons({ theme, StyledBox }) {
+
+export default function HeadereIcons({ theme, StyledBox, version }) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
   return (
     <ThemeProvider theme={theme}>
       <StyledBox>
@@ -65,31 +71,48 @@ export default function HeadereIcons({ theme, StyledBox }) {
                   id='modal-modal-title'
                   variant='h4'
                   component='h2'
-                  sx={{ mb: 4 }}
+                  sx={{ mb: 4, color: 'info.main' }}
                 >
-                  Prompt Generator
+                  Prompt Generator v.{version}
                 </Typography>
                 <Typography variant='body1' sx={{ pb: 4 }}>
                   This is a little app I built for fun after discovering
                   MidJourney and trying to learn all of the prompt options. I am
-                  also trying to keep my development chops fresh (hire me!) and
-                  having fun with React and Material UI.
+                  also trying to keep my development chops fresh and having some
+                  fun with React and Material UI.
                 </Typography>
                 <Typography variant='body1' sx={{ mb: 4 }}>
                   If this helped you out in any way, or you have any suggestions
-                  for improvment, I would love to hear from you!
+                  for improvment, I would love to hear from you! A hello and a
+                  follow will go a long way in motivating me to maintain and
+                  update this gizmo.
                 </Typography>
-                <Typography variant='body1' sx={{ mb: 4 }}>
-                  A hello and a follow will go a long way in motivating me to
-                  maintain and update this gizmo. Currently my new AI focused
-                  Twitter account is at 0 followers! 😊😖
-                </Typography>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <img
+                    src={weHear}
+                    style={{ width: '650px', maxWidth: '100%' }}
+                    alt='We hear for you'
+                  />
+                </Box>
+                <Typography variant='body1' sx={{ mb: 4 }}></Typography>
                 <Stack
                   spacing={2}
                   sx={{ mt: 4 }}
                   direction='row'
                   justifyContent={'flex-end'}
                 >
+                  <Link target='_blank' href='https://zacs.website'>
+                    <IconButton aria-label='copy' color='success'>
+                      <Home />
+                    </IconButton>
+                  </Link>
+
                   <Link
                     target='_blank'
                     href='https://twitter.com/ArtificialSpoon'
