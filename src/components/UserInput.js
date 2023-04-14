@@ -1,6 +1,5 @@
 import React, { memo, useCallback, useMemo, useState } from 'react';
 import {
-  Button,
   Stack,
   TextField,
   Input,
@@ -11,7 +10,6 @@ import {
 import { DeleteForever, CopyAll } from '@mui/icons-material';
 import { useUserInputContext } from '../context/SelectionContext';
 import { useChipSelectionContext } from '../context/SelectionContext';
-import { setSelectionRange } from '@testing-library/user-event/dist/utils';
 
 export const UserInput = memo(() => {
   const { userInput, setUserInput } = useUserInputContext();
@@ -28,23 +26,13 @@ export const UserInput = memo(() => {
     [setUserInput]
   );
 
-  const chipString = useMemo(
-    () => Object.values(selectedChips).join(' '),
-    [selectedChips]
-  );
-  const paramString = useMemo(
-    () => selectedParams.map((param) => param.value).join(' '),
-    [selectedParams]
-  );
   const promptString = useMemo(
-    () => `/imagine prompt: ${userInput} ${chipString} ${paramString}`,
-    [userInput, chipString, paramString]
+    () =>
+      `/imagine prompt: ${userInput} ${Object.values(selectedChips).join(
+        ' '
+      )} ${selectedParams.map((param) => param.value).join(' ')}`,
+    [userInput, selectedChips, selectedParams]
   );
-  const buildPromptString = () => {
-    const chipString = Object.values(selectedChips).join(' ');
-    const paramString = selectedParams.map((param) => param.value).join(' ');
-    return `/imagine prompt: ${userInput} ${chipString} ${paramString}`;
-  };
 
   const resetPrompt = () => {
     setLocalInput('');
@@ -74,7 +62,7 @@ export const UserInput = memo(() => {
             <IconButton
               aria-label='copy'
               color='success'
-              onClick={() => navigator.clipboard.writeText(buildPromptString())}
+              onClick={() => navigator.clipboard.writeText(promptString)}
             >
               <CopyAll />
             </IconButton>

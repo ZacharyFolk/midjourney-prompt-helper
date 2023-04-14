@@ -35,6 +35,8 @@ export const attributeOptions = {
     options: [
       { value: '.25', label: '.25' },
       { value: '.5', label: '.5' },
+      { value: '1', label: '1' },
+      { value: '2', label: '2' },
     ],
     prefix: '--quality ',
     groupId: 'quality',

@@ -1,4 +1,4 @@
-import React, { useState, memo } from 'react';
+import React, { useState } from 'react';
 import { AccordionItem } from './AccordionItem';
 export default function AccordionGroup({ items }) {
   const [expanded, setExpanded] = useState(false);

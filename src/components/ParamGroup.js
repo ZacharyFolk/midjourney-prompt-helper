@@ -1,5 +1,5 @@
 import { memo, useState } from 'react';
-import { Button, Grid, Slider, Stack, Typography } from '@mui/material';
+import { Button, Grid, Slider, Stack } from '@mui/material';
 import { useChipSelectionContext } from '../context/SelectionContext';
 
 export const ParamGroup = memo(({ param }) => {
