@@ -18,9 +18,12 @@ export const MemoizedChip = memo(
     handleModalClose,
   }) => {
     const { selectedChips, toggleChipSelection } = useChipSelectionContext();
+    const weightRegex = new RegExp(`^${chip} ::`);
 
     const attribute = chip.label ? chip.label + ', ' + chip.value : chip;
-    const selected = selectedChips.includes(attribute);
+    const selected = selectedChips.some(
+      (i) => i === chip || weightRegex.test(i)
+    );
 
     const weight = 1;
     // const handleClick = useCallback(() => {
@@ -29,25 +32,23 @@ export const MemoizedChip = memo(
 
     const handleClick = useCallback(() => {
       const chipWithValue = attribute + ' :: ' + weight;
-      console.log('chip', chip, 'attribute', attribute, 'selcted', selected);
-      console.log(
-        'chipWithValue: ' + chipWithValue,
-        'selectedChips: ' + selectedChips,
-        'selectedChips.includes(chipWithValue): ' +
-          selectedChips.includes(chipWithValue),
-        'selectedChips.includes(attribute): ' +
-          selectedChips.includes(attribute)
+
+      const matchFound = selectedChips.some(
+        (i) => i === chip || weightRegex.test(i)
       );
+
+      console.log('matchFound', matchFound);
 
       const exists =
         selectedChips.includes(attribute) ||
         selectedChips.includes(chipWithValue);
 
       console.log('exists', exists);
-      if (exists) {
-        // toggleChipSelection(attribute);
+      if (selected) {
+        toggleChipSelection(attribute);
       } else {
-        setIsModalOpen(true);
+        handleChipClick(chip);
+        // setIsModalOpen(true);
       }
     }, [attribute, selectedChips, toggleChipSelection, weight]);
 

@@ -12,6 +12,7 @@ import {
   Modal,
   Input,
   TextField,
+  Slider,
 } from '@mui/material';
 import { defaultInfo } from './text/DefaultInfo';
 import { attributeOptions } from './attributes/params';
@@ -70,15 +71,24 @@ function App() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedChip, setSelectedChip] = useState('');
-
+  const [weight, setWeight] = useState(1);
   const handleChipClick = (chip) => {
+    console.log(
+      'chip: ' + chip,
+      'selectedChips: ' + selectedChips,
+      'selectedChips.includes(chip): ' + selectedChips.includes(chip)
+    );
+
     setSelectedChip(chip);
+    console.log('root chip click', chip, selectedChip);
     setIsModalOpen(true);
   };
-  const handleModalClose = (weight) => {
+
+  const handleModalClose = () => {
     if (weight !== null) {
       const newChip = `${selectedChip} :: ${weight}`;
       toggleChipSelection(newChip);
+      setWeight(1);
     } else {
       toggleChipSelection(selectedChip);
     }
@@ -266,7 +276,13 @@ function App() {
               >
                 Mediums and Styles
               </Typography>
-              <AccordionGroup items={artistChips} />
+              <AccordionGroup
+                items={artistChips}
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+                handleChipClick={handleChipClick}
+                handleModalClose={handleModalClose}
+              />
 
               <Typography
                 variant='h5'
@@ -324,31 +340,43 @@ function App() {
             aria-describedby='modal-modal-description'
           >
             <Box sx={modalStyle}>
-              <Typography id='modal-modal-title' variant='h6' component='h2'>
-                Text in a modal
-              </Typography>
+              <Typography
+                id='modal-modal-title'
+                variant='h6'
+                component='h2'
+                sx={{
+                  mt: 4,
+                  mb: 2,
 
-              <Input
-                type='number'
-                inputProps={{ min: -1, max: 2, defaultValue: null }}
-                // sx={{
-                //   '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button':
-                //     {
-                //       '-webkit-appearance': 'none',
-                //       margin: 0,
-                //     },
-                //   '& input[type=number]': {
-                //     '-moz-appearance': 'textfield',
-                //   },
-                //   '& .MuiInput-input': {
-                //     textAlign: 'center',
-                //   },
-                // }}
-              />
-
-              <Typography id='modal-modal-description' sx={{ mt: 2 }}>
-                Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                  color: 'grey',
+                }}
+              >
+                Choose the weight
               </Typography>
+              <Stack spacing={4} direction='row' alignItems='center'>
+                <Slider
+                  sx={{ maxWidth: '400px' }}
+                  key='{param.name}'
+                  label='{param.name}'
+                  min={-0.5}
+                  marks={false}
+                  max={100}
+                  valueLabelDisplay='auto'
+                  value={weight}
+                  onChange={(event, newValue) => {
+                    setWeight(newValue);
+                  }}
+                />
+                <Button
+                  key='somekey'
+                  label='somelabel'
+                  value={weight}
+                  variant='outlined'
+                  onClick={handleModalClose}
+                >
+                  {weight}
+                </Button>
+              </Stack>
             </Box>
           </Modal>
         </Container>

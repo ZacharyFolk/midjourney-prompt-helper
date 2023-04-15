@@ -28,6 +28,11 @@ function useChipSelection() {
   const [selectedParams, setSelectedParams] = useState([]);
 
   const toggleChipSelection = (chip) => {
+    const weightRegex = new RegExp(`^${chip} ::`);
+    const matchFound = selectedChips.some(
+      (i) => i === chip || weightRegex.test(i)
+    );
+
     setSelectedChips((prevSelected) =>
       prevSelected.includes(chip)
         ? prevSelected.filter((i) => i !== chip)
