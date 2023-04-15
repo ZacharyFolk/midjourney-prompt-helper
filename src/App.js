@@ -135,7 +135,7 @@ function App() {
                   elevation={3}
                   sx={{
                     p: 8,
-                    height: 160,
+                    height: 180,
                   }}
                 >
                   {isLoading ? (
@@ -159,14 +159,17 @@ function App() {
                     <>
                       <Typography
                         variant='h6'
-                        sx={{ mb: 4, color: 'info.main' }}
+                        sx={{ pt: 0, mb: 2, color: 'info.main' }}
                       >
                         Generate Prompt Ideas
                       </Typography>
+                      <Typography sx={{ mb: 2 }}>
+                        Type a few keywords in the input and then click the blue
+                        arrows to generate prompt ideas.
+                      </Typography>
                       <Typography>
-                        Experimental feature to generate more ideas for your
-                        prompt. Try typing a few keywords in the input then
-                        click the blue arrows to generate some ideas ideas!
+                        This uses an API model that is tuned on a dataset of
+                        250k prompts users have issued to Midjourney.
                       </Typography>
                     </>
                   )}
