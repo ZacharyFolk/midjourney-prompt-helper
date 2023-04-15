@@ -18,7 +18,7 @@ TODO
 
     Changelog
 
-## [0.0.1] - 2023-04-14
+## [1.0.0] - 2023-04-15
 
 ### Initial Release
 

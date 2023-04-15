@@ -33,11 +33,14 @@ function useChipSelection() {
       (i) => i === chip || weightRegex.test(i)
     );
 
-    setSelectedChips((prevSelected) =>
-      prevSelected.includes(chip)
-        ? prevSelected.filter((i) => i !== chip)
-        : [...prevSelected, chip]
-    );
+    if (matchFound) {
+      // Remove the chip if it already exists in the array
+      setSelectedChips((prevSelected) =>
+        prevSelected.filter((i) => i.split('::')[0].trim() !== chip)
+      );
+    } else {
+      setSelectedChips((prevSelected) => [...prevSelected, chip]);
+    }
   };
 
   const toggleParamSelection = (item, groupId) => {

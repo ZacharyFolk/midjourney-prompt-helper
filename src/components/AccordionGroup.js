@@ -6,6 +6,7 @@ export default function AccordionGroup({
   setIsModalOpen,
   handleChipClick,
   handleModalClose,
+  weight,
 }) {
   const [expanded, setExpanded] = useState(false);
   const handleChange = (panel) => (isExpanded) => {
@@ -21,10 +22,9 @@ export default function AccordionGroup({
             value={value}
             expanded={expanded === id}
             handleChange={handleChange(id)}
-            isModalOpen={isModalOpen}
             setIsModalOpen={setIsModalOpen}
             handleChipClick={handleChipClick}
-            handleModalClose={handleModalClose}
+            weight={weight}
           />
         ))}
     </div>

@@ -78,7 +78,7 @@ export const artistChips = [
   {
     id: 'media-types',
     name: 'Media Types',
-    description: 'List of different print media types',
+    description: 'List of different print types',
     chips: [
       'Advertisement',
       'Album Cover',
@@ -123,7 +123,7 @@ export const artistChips = [
   {
     id: 'painters',
     name: 'Painters',
-    description: 'List of some famous painters',
+    description: 'List of  painters',
     chips: [
       'Alberto Giacometti',
       'Amedeo Modigliani',

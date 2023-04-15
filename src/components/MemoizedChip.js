@@ -10,60 +10,25 @@ import { useChipSelectionContext } from '../context/SelectionContext';
  * @returns {JSX.Element} The memoized chip component.
  */
 export const MemoizedChip = memo(
-  ({
-    chip,
-    isModalOpen,
-    setIsModalOpen,
-    handleChipClick,
-    handleModalClose,
-  }) => {
+  ({ chip, setIsModalOpen, handleChipClick, weight }) => {
     const { selectedChips, toggleChipSelection } = useChipSelectionContext();
     const weightRegex = new RegExp(`^${chip} ::`);
-
     const attribute = chip.label ? chip.label + ', ' + chip.value : chip;
     const selected = selectedChips.some(
       (i) => i === chip || weightRegex.test(i)
     );
-
-    const weight = 1;
-    // const handleClick = useCallback(() => {
-    //   toggleChipSelection(attribute);
-    // }, [attribute, toggleChipSelection]);
-
     const handleClick = useCallback(() => {
-      const chipWithValue = attribute + ' :: ' + weight;
-
-      const matchFound = selectedChips.some(
-        (i) => i === chip || weightRegex.test(i)
-      );
-
-      console.log('matchFound', matchFound);
-
-      const exists =
-        selectedChips.includes(attribute) ||
-        selectedChips.includes(chipWithValue);
-
-      console.log('exists', exists);
       if (selected) {
         toggleChipSelection(attribute);
       } else {
         handleChipClick(chip);
-        // setIsModalOpen(true);
       }
-    }, [attribute, selectedChips, toggleChipSelection, weight]);
+    }, [attribute, chip, handleChipClick, selected, toggleChipSelection]);
 
-    // const handleDelete = useCallback(() => {
-    //   toggleChipSelection(attribute);
-    // }, [attribute, toggleChipSelection]);
     const handleDelete = useCallback(() => {
-      const chipWithValue = attribute + ' :: ' + weight;
-      toggleChipSelection(chipWithValue);
-    }, [attribute, toggleChipSelection, weight]);
-    const handleModalConfirm = useCallback(() => {
-      const chipWithValue = attribute + ' :: ' + weight;
-      toggleChipSelection(chipWithValue);
-      setIsModalOpen(false);
-    }, [attribute, toggleChipSelection, weight]);
+      toggleChipSelection(attribute);
+    }, [attribute, toggleChipSelection]);
+
     return (
       <Chip
         label={chip.label ? chip.label : chip}

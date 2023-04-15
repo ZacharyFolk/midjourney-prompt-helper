@@ -2,7 +2,7 @@ export const photoChips = [
   {
     id: 'cameras',
     name: 'Cameras',
-    description: 'Large varitey of film and cameras',
+    description: 'Large varitey of cameras',
     chips: [
       'Agfa Ansco Speedex',
       'Agfa Isolette',
@@ -34,12 +34,11 @@ export const photoChips = [
       'Kodak Brownie Hawkeye',
       'Kodak Brownie No. 2',
       'Kodak Instamatic',
-      'Kodak Medalist II',
-      'Kodak Retina IIa',
       'Kodak Retina IIIc',
       'Konica Auto S3',
-      'Konica C35 EF',
-      'Konica Hexar AF',
+      'GoPro HERO9 Black camera with GoPro Super Suit Dive Housing',
+      'Logitech C920 HD Pro Webcam',
+      'DJI Phantom 4 Pro drone camera',
       'Lomo LC-A',
       'Lomo Lubitel 166B',
       'Leica IIIf',
@@ -81,6 +80,26 @@ export const photoChips = [
       'Yashica T4',
       'Zeiss Ikon Contax IIIa',
       'Zeiss Ikon Contax II',
+    ],
+  },
+  {
+    id: 'lens',
+    name: 'Camera Lenses',
+    description: 'Defines camera lens types',
+    chips: [
+      'Canon EF 100mm f/2.8L Macro lens',
+      'Canon EF 8-15mm f/4L Fisheye USM lens',
+      'Canon EF 24-70mm f/2.8L II USM lens',
+      'Canon EF 100mm f/2.8L Macro IS USM lens',
+      'Canon EF 16-35mm f/2.8L III USM lens',
+      'Canon EF 50mm f/1.2L USM lens',
+      ' Nikkor 70-200mm f/2.8E FL ED VR lens',
+      'Panasonic Lumix 12-35mm f/2.8 II lens',
+      'Canon EF 70-200mm f/2.8L IS III USM lens',
+      'Canon EF 14mm f/2.8L II USM lens',
+      'Nikkor 24-70mm f/2.8E ED VR lens',
+      'Sony FE 16-35mm f/2.8 GM lens',
+      'Sony FE 24-105mm f/4 G OSS lens',
     ],
   },
   {
@@ -139,216 +158,98 @@ export const photoChips = [
   {
     id: 'angles',
     name: 'Camera Angles',
-    description: 'Also defines camera and lens types',
+    description: 'Variety of camera angles',
     chips: [
-      {
-        label: 'Underwater Close-Up Shot',
-        value:
-          'Canon EOS 5D Mark IV camera with a Canon EF 100mm f/2.8L Macro lens',
-      },
-      {
-        label: 'Underwater Shot',
-        value:
-          'Canon EOS-1D X Mark II camera with a Canon EF 8-15mm f/4L Fisheye USM lens in an underwater housing',
-      },
-      {
-        label: 'GoPro-Style',
-        value: 'GoPro HERO9 Black camera with GoPro Super Suit Dive Housing',
-      },
-      {
-        label: 'Webcam-Style Shot',
-        value: 'Logitech C920 HD Pro Webcam',
-      },
-      {
-        label: 'Aerial Shot (Bird’s-Eye View)',
-        value: 'DJI Phantom 4 Pro drone camera',
-      },
-      {
-        label: 'Ground-Level Shot',
-        value:
-          'Canon EOS-1DX Mark III camera with a Canon EF 24-70mm f/2.8L II USM lens',
-      },
-      {
-        label: 'Extreme Close-Up Shot',
-        value: 'Canon EF 100mm f/2.8L Macro IS USM lens',
-      },
-      {
-        label: 'Full shot',
-        value:
-          'Canon EF 16-35mm f/2.8L III USM lens on a Canon EOS 5D Mark IV camera',
-      },
-      {
-        label: 'Medium shot',
-        value:
-          'Canon EF 24-70mm f/2.8L II USM lens on a Canon EOS 5D Mark IV camera',
-      },
-      {
-        label: 'Close-up shot',
-        value: 'Canon EF 50mm f/1.2L USM lens on a Canon EOS 5D Mark IV camera',
-      },
-      {
-        label: 'Shot from Behind',
-        value: 'Nikon D850 camera with a Nikkor 70-200mm f/2.8E FL ED VR lens',
-      },
-      {
-        label: 'Side-Angle (Side-View)',
-        value:
-          'Panasonic Lumix GH5S camera with a Panasonic Lumix 12-35mm f/2.8 II lens',
-      },
-      {
-        label: 'Extreme high-angle shot',
-        value:
-          'Canon EF 70-200mm f/2.8L IS III USM lens on a Canon EOS 5D Mark IV camera with a high-angle tripod',
-      },
-      {
-        label: 'Extreme low-angle shot',
-        value:
-          'Canon EF 14mm f/2.8L II USM lens on a Canon EOS 5D Mark IV camera with a low-angle tripod',
-      },
-      {
-        label: 'High-Angle Shot',
-        value: 'Nikon D850 camera with a Nikkor 24-70mm f/2.8E ED VR lens',
-      },
-      {
-        label: 'Low-Angle Shot',
-        value: 'Sony Alpha a7 III camera with a Sony FE 16-35mm f/2.8 GM lens',
-      },
-      {
-        label: 'Eye-Level Shot',
-        value:
-          'Sony Alpha a7 III camera with a Sony FE 24-105mm f/4 G OSS lens',
-      },
+      'Underwater Close-Up Shot',
+      'Underwater Shot',
+      'GoPro-Style',
+      'Webcam-Style Shot',
+      'Aerial Shot (Bird’s-Eye View)',
+      'Ground-Level Shot',
+      'Extreme Close-Up Shot',
+      'Full shot',
+      'Medium shot',
+      'Close-up shot',
+      'Shot from Behind',
+      'Side-Angle (Side-View)',
+      'Extreme high-angle shot',
+      'Extreme low-angle shot',
+      'High-Angle Shot',
+      'Low-Angle Shot',
+      'Eye-Level Shot',
     ],
   },
   {
     id: 'weather',
     name: 'Weather and Lighting',
-    description: 'Also defines camera and lens types',
+    description: 'Weather and lighting conditions',
     chips: [
-      {
-        label: 'Sunny',
-        value:
-          'Canon EOS 5D Mark IV camera with a Canon EF 24-70mm f/2.8L II USM lens',
-      },
-      {
-        label: 'Partly Cloudy',
-        value: 'Nikon D850 camera with a Nikkor 24-70mm f/2.8E ED VR lens',
-      },
-      {
-        label: 'Rainy',
-        value:
-          'Sony Alpha a7 III camera with a Sony FE 16-35mm f/2.8 GM lens and waterproof housing',
-      },
-
-      {
-        label: 'Snowy',
-        value:
-          'Canon EOS-1D X Mark II camera with a Canon EF 24-105mm f/4L IS II USM lens and waterproof housing',
-      },
-
-      {
-        label: 'Overcast',
-        value:
-          'Panasonic Lumix GH5S camera with a Panasonic Lumix 12-35mm f/2.8 II lens',
-      },
-      {
-        label: 'Foggy',
-        value:
-          'Sony Alpha a7R IV camera with a Sony FE 70-200mm f/2.8 GM OSS lens',
-      },
-
-      {
-        label: 'Hazy',
-        value: 'Canon EOS R6 camera with a Canon RF 24-105mm f/4L IS USM lens',
-      },
+      'Sunny',
+      'Partly Cloudy',
+      'Rainy',
+      'Snowy',
+      'Overcast',
+      'Foggy',
+      'Hazy',
+      'Thunderstorm',
+      'Blizzard',
+      'Tornado',
+      'Hurricane',
+      'Sleet',
+      'Mist',
+      'Drizzle',
+      'Squall',
+      'Sandstorm',
+      'Duststorm',
+      'Heatwave',
+      'Coldwave',
+      'Icy',
     ],
   },
 
   {
     id: 'timeOfDay',
     name: 'Time of Day',
-    description: 'Also defines camera and lens types',
+    description: 'Different moods from time of day',
     chips: [
-      {
-        label: 'Sunrise',
-        value: 'Sony A7R IV camera with a Canon RF 15-35mm f/2.8L IS USM lens',
-      },
-      {
-        label: 'Morning',
-        value:
-          'Fujifilm X-T4 camera with a Fujinon XF 16-55mm f/2.8 R LM WR lens',
-      },
-      {
-        label: 'Afternoon',
-        value: 'Sony A7 III camera with a Sony FE 70-200mm f/2.8 GM OSS lens',
-      },
-      {
-        label: 'Golden Hour',
-        value: 'Canon EOS R5 camera with a Canon RF 50mm f/1.2L USM lens',
-      },
-      {
-        label: 'Sunset',
-        value: 'Sony A7R IV camera with a Sony FE 16-35mm f/2.8 GM lens',
-      },
-      {
-        label: 'Twilight',
-        value:
-          'Panasonic Lumix S1H camera with a Panasonic Lumix S Pro 50mm f/1.4 lens',
-      },
-      {
-        label: 'Night',
-        value: 'Sony A7S III camera with a Sigma 35mm f/1.2 DG DN Art lens',
-      },
+      'Sunrise',
+      'Morning',
+      'Afternoon',
+      'Golden Hour',
+      'Sunset',
+      'Twilight',
+      'Night',
+      'Blue hour',
+      'Dusk',
     ],
   },
 
   {
     id: 'ambiance',
-    name: 'Ambiance & Styling',
-    description: 'Also defines camera and lens types',
+    name: 'Ambiance',
+    description: 'Set the mood',
     chips: [
-      {
-        label: 'Dark and Moody',
-        value: 'Sony a7S III with Sony FE 50mm f/1.4 ZA lens',
-      },
-      {
-        label: 'Bright and Vibrant',
-        value: 'Canon EOS R6 with Canon EF 16-35mm f/2.8L III USM lens',
-      },
-      {
-        label: 'Fantasy',
-        value: 'Fujifilm X-T4 with Fujinon XF 56mm f/1.2 R lens',
-      },
-      {
-        label: 'Historical',
-        value:
-          'Fujifilm GFX 100S with Fujinon GF 23mm f/4 R LM WR lens or Nikon Z7 II with Nikkor Z 50mm f/1.2 S lens',
-      },
-      {
-        label: 'Adventure/Action',
-        value: 'GoPro HERO10 Black',
-      },
-      {
-        label: 'Documentary',
-        value: 'Canon EOS C300 Mark III with Canon CN-E 24mm T1.5 L F lens',
-      },
-      {
-        label: 'Horror',
-        value:
-          'Blackmagic Pocket Cinema Camera 6K Pro with Sigma 18-35mm f/1.8 DC HSM Art lens',
-      },
-      {
-        label: 'Mystical',
-        value: 'Nikon D6 with Nikon AF-S NIKKOR 24mm f/1.4G ED lens',
-      },
-      {
-        label: 'Romantic',
-        value: 'Canon EOS R with Canon RF 50mm f/1.2L USM lens',
-      },
-      {
-        label: 'Rustic',
-        value: 'Panasonic Lumix GH5S with Sigma 18-35mm f/1.8 DC HSM Art lens',
-      },
+      'Dark and Moody',
+      'Bright and Vibrant',
+      'Fantasy',
+      'Historical',
+      'Adventure/Action',
+      'Documentary',
+      'Horror',
+      'Mystical',
+      'Romantic',
+      'Rustic',
+      'Minimalistic',
+      'Futuristic',
+      'Gritty',
+      'Surreal',
+      'Saturated',
+      'Pastel',
+      'Noir',
+      'Gothic',
+      'Glamorous',
+      'Industrial',
+      'Bohemian',
     ],
   },
 ];

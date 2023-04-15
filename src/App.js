@@ -10,17 +10,14 @@ import {
   Stack,
   CircularProgress,
   Modal,
-  Input,
-  TextField,
   Slider,
 } from '@mui/material';
 import { defaultInfo } from './text/DefaultInfo';
 import { attributeOptions } from './attributes/params';
 import { photoChips } from './attributes/chipObject';
 import { artistChips } from './attributes/artistsObject';
-
 import { genreChips } from './attributes/genreObject';
-
+import { critterChips } from './attributes/critterObject';
 import { ParamGroup } from './components/ParamGroup';
 import { UserInput } from './components/UserInput';
 import { EnhancedPromptButtons } from './components/EnhancePromptButtons';
@@ -34,7 +31,7 @@ import AccordionGroup from './components/AccordionGroup';
 import './App.css';
 import { Reddit } from '@mui/icons-material';
 
-const VERSION = '0.0.1';
+const VERSION = '1.0.0';
 
 const theme = createTheme({
   palette: {
@@ -72,15 +69,9 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedChip, setSelectedChip] = useState('');
   const [weight, setWeight] = useState(1);
-  const handleChipClick = (chip) => {
-    console.log(
-      'chip: ' + chip,
-      'selectedChips: ' + selectedChips,
-      'selectedChips.includes(chip): ' + selectedChips.includes(chip)
-    );
 
+  const handleChipClick = (chip) => {
     setSelectedChip(chip);
-    console.log('root chip click', chip, selectedChip);
     setIsModalOpen(true);
   };
 
@@ -274,14 +265,13 @@ function App() {
                   color: 'grey',
                 }}
               >
-                Mediums and Styles
+                Mediums and Artists
               </Typography>
               <AccordionGroup
                 items={artistChips}
-                isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}
                 handleChipClick={handleChipClick}
-                handleModalClose={handleModalClose}
+                weight={weight}
               />
 
               <Typography
@@ -293,26 +283,30 @@ function App() {
               >
                 Photography
               </Typography>
-              <Typography
-                variant='h6'
-                sx={{
-                  mb: 2,
-                  color: 'darkgrey',
-                  fontStyle: 'italic',
-                  fontSize: '90%',
-                  textIndent: '10px',
-                }}
-              >
-                Some add add additonal values like lens type
-              </Typography>
+
               <AccordionGroup
                 items={photoChips}
-                isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}
                 handleChipClick={handleChipClick}
-                handleModalClose={handleModalClose}
+                weight={weight}
               />
+              <Typography
+                variant='h5'
+                sx={{
+                  mt: 4,
+                  mb: 2,
 
+                  color: 'grey',
+                }}
+              >
+                Creatures
+              </Typography>
+              <AccordionGroup
+                items={critterChips}
+                setIsModalOpen={setIsModalOpen}
+                handleChipClick={handleChipClick}
+                weight={weight}
+              />
               <Typography
                 variant='h5'
                 sx={{
@@ -326,10 +320,9 @@ function App() {
               </Typography>
               <AccordionGroup
                 items={genreChips}
-                isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}
                 handleChipClick={handleChipClick}
-                handleModalClose={handleModalClose}
+                weight={weight}
               />
             </Grid>
           </Grid>

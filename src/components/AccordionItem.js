@@ -19,6 +19,7 @@ export const AccordionItem = memo(
     setIsModalOpen,
     handleChipClick,
     handleModalClose,
+    weight,
   }) => (
     <Accordion expanded={expanded} onChange={handleChange}>
       <AccordionSummary
@@ -39,10 +40,9 @@ export const AccordionItem = memo(
             <Grid item key={index}>
               <MemoizedChip
                 chip={chip}
-                isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}
                 handleChipClick={handleChipClick}
-                handleModalClose={handleModalClose}
+                weight={weight}
               />
             </Grid>
           ))}
