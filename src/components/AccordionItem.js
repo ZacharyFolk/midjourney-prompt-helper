@@ -10,7 +10,16 @@ import { MemoizedChip } from './MemoizedChip';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 export const AccordionItem = memo(
-  ({ id, value, expanded, handleChange }) => (
+  ({
+    id,
+    value,
+    expanded,
+    handleChange,
+    isModalOpen,
+    setIsModalOpen,
+    handleChipClick,
+    handleModalClose,
+  }) => (
     <Accordion expanded={expanded} onChange={handleChange}>
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
@@ -28,7 +37,13 @@ export const AccordionItem = memo(
         <Grid container spacing={3}>
           {value.chips.map((chip, index) => (
             <Grid item key={index}>
-              <MemoizedChip chip={chip} />
+              <MemoizedChip
+                chip={chip}
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+                handleChipClick={handleChipClick}
+                handleModalClose={handleModalClose}
+              />
             </Grid>
           ))}
         </Grid>

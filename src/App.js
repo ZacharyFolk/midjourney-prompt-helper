@@ -9,6 +9,9 @@ import {
   Paper,
   Stack,
   CircularProgress,
+  Modal,
+  Input,
+  TextField,
 } from '@mui/material';
 import { defaultInfo } from './text/DefaultInfo';
 import { attributeOptions } from './attributes/params';
@@ -44,16 +47,48 @@ const StyledBox = styled(Box)(({ theme }) => ({
   height: '100%',
   padding: theme.spacing(2),
 }));
+
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 function App() {
   const [paramDesc, setParamDesc] = useState(defaultInfo);
   const [generatedItems, setGeneratedItems] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const { setUserInput } = useUserInputContext();
 
-  const { selectedParams } = useChipSelectionContext();
+  const { selectedParams, selectedChips, toggleChipSelection } =
+    useChipSelectionContext();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedChip, setSelectedChip] = useState('');
+
+  const handleChipClick = (chip) => {
+    setSelectedChip(chip);
+    setIsModalOpen(true);
+  };
+  const handleModalClose = (weight) => {
+    if (weight !== null) {
+      const newChip = `${selectedChip} :: ${weight}`;
+      toggleChipSelection(newChip);
+    } else {
+      toggleChipSelection(selectedChip);
+    }
+    setIsModalOpen(false);
+  };
+
   const handleSetGeneratedItems = (items) => {
     setGeneratedItems(items);
   };
+
   useEffect(() => {
     if (selectedParams) {
       const selectedParam =
@@ -159,12 +194,12 @@ function App() {
                     <>
                       <Typography
                         variant='h6'
-                        sx={{ pt: 0, mb: 2, color: 'info.main' }}
+                        sx={{ mb: 2, color: 'info.main' }}
                       >
                         Generate Prompt Ideas
                       </Typography>
                       <Typography sx={{ mb: 2 }}>
-                        Type a few keywords in the input and then click the blue
+                        Type keywords in the input and then click the blue
                         arrows to generate prompt ideas.
                       </Typography>
                       <Typography>
@@ -254,7 +289,13 @@ function App() {
               >
                 Some add add additonal values like lens type
               </Typography>
-              <AccordionGroup items={photoChips} />
+              <AccordionGroup
+                items={photoChips}
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+                handleChipClick={handleChipClick}
+                handleModalClose={handleModalClose}
+              />
 
               <Typography
                 variant='h5'
@@ -267,9 +308,49 @@ function App() {
               >
                 Comics and Movies
               </Typography>
-              <AccordionGroup items={genreChips} />
+              <AccordionGroup
+                items={genreChips}
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+                handleChipClick={handleChipClick}
+                handleModalClose={handleModalClose}
+              />
             </Grid>
           </Grid>
+          <Modal
+            open={isModalOpen}
+            onClose={handleModalClose}
+            aria-labelledby='modal-modal-title'
+            aria-describedby='modal-modal-description'
+          >
+            <Box sx={modalStyle}>
+              <Typography id='modal-modal-title' variant='h6' component='h2'>
+                Text in a modal
+              </Typography>
+
+              <Input
+                type='number'
+                inputProps={{ min: -1, max: 2, defaultValue: null }}
+                // sx={{
+                //   '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button':
+                //     {
+                //       '-webkit-appearance': 'none',
+                //       margin: 0,
+                //     },
+                //   '& input[type=number]': {
+                //     '-moz-appearance': 'textfield',
+                //   },
+                //   '& .MuiInput-input': {
+                //     textAlign: 'center',
+                //   },
+                // }}
+              />
+
+              <Typography id='modal-modal-description' sx={{ mt: 2 }}>
+                Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+              </Typography>
+            </Box>
+          </Modal>
         </Container>
       </StyledBox>
     </ThemeProvider>

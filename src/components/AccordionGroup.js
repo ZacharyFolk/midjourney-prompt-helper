@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import { AccordionItem } from './AccordionItem';
-export default function AccordionGroup({ items }) {
+export default function AccordionGroup({
+  items,
+  isModalOpen,
+  setIsModalOpen,
+  handleChipClick,
+  handleModalClose,
+}) {
   const [expanded, setExpanded] = useState(false);
   const handleChange = (panel) => (isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -15,6 +21,10 @@ export default function AccordionGroup({ items }) {
             value={value}
             expanded={expanded === id}
             handleChange={handleChange(id)}
+            isModalOpen={isModalOpen}
+            setIsModalOpen={setIsModalOpen}
+            handleChipClick={handleChipClick}
+            handleModalClose={handleModalClose}
           />
         ))}
     </div>
