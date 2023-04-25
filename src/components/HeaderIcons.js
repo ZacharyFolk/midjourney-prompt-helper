@@ -20,8 +20,6 @@ import {
   Home,
 } from '@mui/icons-material';
 
-import weHear from './../images/we-here-for-you.png';
-
 const style = {
   position: 'absolute',
   top: '50%',
@@ -53,7 +51,6 @@ export default function HeadereIcons({ theme, StyledBox, version }) {
           <IconButton aria-label='copy' color='success' onClick={handleOpen}>
             <HelpOutline />
           </IconButton>
-
           <Modal
             open={open}
             onClose={handleClose}
@@ -79,7 +76,7 @@ export default function HeadereIcons({ theme, StyledBox, version }) {
                   This is a little app I built for fun after discovering
                   MidJourney and trying to learn all of the prompt options. I am
                   also trying to keep my development chops fresh and having some
-                  fun with React and Material UI.
+                  fun building with React and Material UI.
                 </Typography>
                 <Typography variant='body1' sx={{ mb: 4 }}>
                   If this helped you out in any way, or you have any suggestions
@@ -87,19 +84,7 @@ export default function HeadereIcons({ theme, StyledBox, version }) {
                   follow will go a long way in motivating me to maintain and
                   update this gizmo.
                 </Typography>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                >
-                  <img
-                    src={weHear}
-                    style={{ width: '650px', maxWidth: '100%' }}
-                    alt='We hear for you'
-                  />
-                </Box>
+
                 <Typography variant='body1' sx={{ mb: 4 }}></Typography>
                 <Stack
                   spacing={2}

@@ -18,6 +18,7 @@ import { photoChips } from './attributes/chipObject';
 import { artistChips } from './attributes/artistsObject';
 import { genreChips } from './attributes/genreObject';
 import { critterChips } from './attributes/critterObject';
+import { placesChips } from './attributes/placeObject';
 import { ParamGroup } from './components/ParamGroup';
 import { UserInput } from './components/UserInput';
 import { EnhancedPromptButtons } from './components/EnhancePromptButtons';
@@ -25,13 +26,13 @@ import { useUserInputContext } from './context/SelectionContext';
 import { useChipSelectionContext } from './context/SelectionContext';
 
 import RedditImageScraper from './components/RedditImageScraper';
-import HeadereIcons from './components/HeaderIcons';
+import HeaderIcons from './components/HeaderIcons';
 import AccordionGroup from './components/AccordionGroup';
 
 import './App.css';
 import { Reddit } from '@mui/icons-material';
 
-const VERSION = '1.0.0';
+const VERSION = '1.1.0';
 
 const theme = createTheme({
   palette: {
@@ -118,7 +119,7 @@ function App() {
               </Typography>
             </Grid>
             <Grid item xs={4}>
-              <HeadereIcons
+              <HeaderIcons
                 theme={theme}
                 StyledBox={StyledBox}
                 version={VERSION}
@@ -130,87 +131,8 @@ function App() {
             <Grid item xs={12} marginBottom={10}>
               <hr />
             </Grid>
-            <Grid item xs={7}>
+            <Grid item xs={12}>
               <UserInput />
-            </Grid>
-            <Grid item xs={1}>
-              <EnhancedPromptButtons
-                setGeneratedItems={handleSetGeneratedItems}
-                setIsLoading={setIsLoading}
-              />
-            </Grid>
-            <Grid item xs={4}>
-              {generatedItems.length > 0 ? (
-                <Box
-                  sx={{
-                    width: '100%',
-                    maxHeight: 250,
-                    overflowY: 'scroll',
-                  }}
-                >
-                  <Stack style={{ paddingRight: '20px' }}>
-                    {generatedItems.map((item, index) => (
-                      <Button
-                        key={index}
-                        variant='outlined'
-                        style={{
-                          textAlign: 'left',
-                          textTransform: 'none',
-                          justifyContent: 'flex-start',
-                          marginBottom: '20px',
-                        }}
-                        onClick={() => setUserInput(item)}
-                      >
-                        {item}
-                      </Button>
-                    ))}
-                  </Stack>
-                </Box>
-              ) : (
-                <Paper
-                  elevation={3}
-                  sx={{
-                    p: 8,
-                    height: 180,
-                  }}
-                >
-                  {isLoading ? (
-                    <Grid
-                      container
-                      spacing={2}
-                      justifyContent='center'
-                      alignItems='center'
-                      style={{ height: '100%' }}
-                    >
-                      <Grid
-                        item
-                        xs={1}
-                        alignItems='center'
-                        justifyContent='center'
-                      >
-                        <CircularProgress />
-                      </Grid>
-                    </Grid>
-                  ) : (
-                    <>
-                      <Typography
-                        variant='h6'
-                        sx={{ mb: 2, color: 'info.main' }}
-                      >
-                        Generate Prompt Ideas
-                      </Typography>
-                      <Typography sx={{ mb: 2 }}>
-                        Type keywords in the input and then click the blue
-                        arrows to generate prompt ideas.
-                      </Typography>
-                      <Typography>
-                        This uses an API model that is tuned on a dataset of
-                        250k prompts users have issued to Midjourney.
-                      </Typography>
-                    </>
-                  )}
-                </Paper>
-              )}
             </Grid>
           </Grid>
 
@@ -236,7 +158,6 @@ function App() {
                     </Grid>
                   </Grid>
                 </Grid>
-
                 <Grid item xs={7} style={{ paddingLeft: '40px' }}>
                   <Box>
                     {Object.entries(attributeOptions).map(([key, value]) => (
@@ -246,7 +167,6 @@ function App() {
                 </Grid>
               </Grid>
             </Grid>
-
             <Grid item xs={4}>
               <Paper elevation={6} style={{ padding: '20px' }}>
                 <Typography variant='h6' sx={{ mb: 4, color: 'warning.main' }}>
@@ -307,6 +227,7 @@ function App() {
                 handleChipClick={handleChipClick}
                 weight={weight}
               />
+
               <Typography
                 variant='h5'
                 sx={{
@@ -316,7 +237,25 @@ function App() {
                   color: 'grey',
                 }}
               >
-                Comics and Movies
+                Places
+              </Typography>
+              <AccordionGroup
+                items={placesChips}
+                setIsModalOpen={setIsModalOpen}
+                handleChipClick={handleChipClick}
+                weight={weight}
+              />
+
+              <Typography
+                variant='h5'
+                sx={{
+                  mt: 4,
+                  mb: 2,
+
+                  color: 'grey',
+                }}
+              >
+                Entertainment
               </Typography>
               <AccordionGroup
                 items={genreChips}

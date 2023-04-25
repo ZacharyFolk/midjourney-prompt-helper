@@ -1,22 +1,28 @@
     ========================================= [o] Midjouney Prompt Tool [o] ==========================================
 
-This was for fun and to help build prompts to use with MidJourney.
+This was built just for fun and to help brainstorm prompts to use with MidJourney.
 
 ---
 
     Live Demo
 
-You can check it out.. eventually...
-
----
-
-    How to use
+[Midjourney Prompt Tool] (https://midjourney-tool.zacs.website/)
 
 TODO
 
 ---
 
     Changelog
+
+## [1.1.0] - 2023-04-15
+
+### Added
+
+- More chips to choose from
+
+### Removed
+
+- Service on Hugging Face doesn't work anymore :(
 
 ## [1.0.0] - 2023-04-15
 
