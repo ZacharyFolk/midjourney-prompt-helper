@@ -14,7 +14,17 @@ TODO
 
     Changelog
 
-## [1.1.0] - 2023-04-15
+## [1.1.1] - 2023-04-25
+
+### Fixed
+
+- Made a little more mobile friendly
+
+### Removed
+
+- Service on Hugging Face doesn't work anymore :(
+
+## [1.1.0] - 2023-04-25
 
 ### Added
 

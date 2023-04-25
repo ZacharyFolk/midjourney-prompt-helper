@@ -32,7 +32,7 @@ import AccordionGroup from './components/AccordionGroup';
 import './App.css';
 import { Reddit } from '@mui/icons-material';
 
-const VERSION = '1.1.0';
+const VERSION = '1.1.1';
 
 const theme = createTheme({
   palette: {
@@ -141,9 +141,9 @@ function App() {
             spacing={10}
             style={{ marginTop: '20px', marginBottom: '20px' }}
           >
-            <Grid item xs={8}>
+            <Grid item s={12} md={8}>
               <Grid container spacing={4}>
-                <Grid item xs={5}>
+                <Grid item xs={12} md={5}>
                   <Grid item xs={12}>
                     <Grid container alignItems='center' justifyContent='center'>
                       <Grid item xs={12}>
@@ -158,7 +158,7 @@ function App() {
                     </Grid>
                   </Grid>
                 </Grid>
-                <Grid item xs={7} style={{ paddingLeft: '40px' }}>
+                <Grid item xs={12} md={7} style={{ paddingLeft: '40px' }}>
                   <Box>
                     {Object.entries(attributeOptions).map(([key, value]) => (
                       <ParamGroup key={key} param={value} />
@@ -167,7 +167,8 @@ function App() {
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item xs={4}>
+
+            <Grid item s={12} md={4}>
               <Paper elevation={6} style={{ padding: '20px' }}>
                 <Typography variant='h6' sx={{ mb: 4, color: 'warning.main' }}>
                   Latest posts from r/MidJourney
